@@ -5,7 +5,11 @@ import { Usuario } from '../interfaces/usuario';
   providedIn: 'root',
 })
 export class UsuarioServicio {
-  usuarioLogueado: boolean = false;
+  usuarioLogueado: Usuario = {
+    usuario: '',
+    password: ''
+  };
+
   private usuarios: Usuario[] = [
     {
       usuario: "admin",
@@ -18,10 +22,12 @@ export class UsuarioServicio {
       (u) => u.usuario === usuario && u.password === password
     );
     if (usuarioEncontrado) {
-      this.usuarioLogueado = true;
+      this.usuarioLogueado = {
+        usuario: usuarioEncontrado.usuario,
+        password: usuarioEncontrado.password
+      };
       return true;
     } else {
-      this.usuarioLogueado = false;
       return false;
     }
   }

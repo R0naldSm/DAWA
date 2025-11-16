@@ -3,7 +3,7 @@
     <i class="bi bi-box-seam me-2"></i>AgroDistribution
   </a>
 
-  @if(!usuarioServicio.usuarioLogueado){
+  @if(usuarioServicio.usuarioLogueado.usuario == '' && usuarioServicio.usuarioLogueado.password == '') {
     <div class="ms-auto">
       <button class="btn btn-outline-success me-2" (click)="mostrar_acerca_de()">Acerca de</button>
       <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">Iniciar Sesión</button>
