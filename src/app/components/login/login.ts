@@ -14,8 +14,6 @@ export default class Login {
     const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
     const contrasena = (document.getElementById('clave') as HTMLInputElement).value;
 
-    alert('Se procederá a validar las credenciales de acceso');
-
     if (!usuario || !contrasena) {
       alert('Por favor, complete todos los campos.');
       return;
@@ -24,11 +22,8 @@ export default class Login {
       alert('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
-    if (usuario === 'admin' && contrasena === 'admin123') {
-      setTimeout(() => {
-        alert('¡Inicio de sesión exitoso!');
-        this.usuarioServicio.usuarioLogueado = true
-      }, 2000);
+    if (this.usuarioServicio.login(usuario, contrasena)) {
+      alert('¡Inicio de sesión exitoso!');
     } else {
       alert('Credenciales incorrectas. Inténtelo de nuevo.');
     }

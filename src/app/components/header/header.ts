@@ -20,5 +20,6 @@ export default class Header {
 
   cerrarSesion(){
     this.usuarioServicio.usuarioLogueado = false;
+    this.rutasPages.navigate(['']);
   }
 }
