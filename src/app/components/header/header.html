@@ -9,9 +9,13 @@
       <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">Iniciar Sesión</button>
     </div>
   } @else {
-    <div class="ms-auto">
+    <div class="ms-auto d-flex align-items-center">
       <button class="btn btn-success me-2" [routerLink]="'/pedidos'">Pedidos</button>
       <button class="btn btn-outline-success" (click)="cerrarSesion()">Cerrar Sesión</button>
+      <div class="text-success d-flex align-items-center">
+        <i class="bi bi-person-circle fs-4 ms-3"></i>
+        <span class="ms-3">{{usuarioServicio.usuarioLogueado.usuario }}</span>
+      </div>
     </div>
   }
 </nav>
