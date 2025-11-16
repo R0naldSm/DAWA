@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { UsuarioServicio } from '../../services/usuario-servicio';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,7 @@ import { UsuarioServicio } from '../../services/usuario-servicio';
 })
 export default class Login {
   private usuarioServicio = inject(UsuarioServicio)
+  private ruta = inject(Router);
 
   login() {
     const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
@@ -24,6 +26,9 @@ export default class Login {
     }
     if (this.usuarioServicio.login(usuario, contrasena)) {
       alert('¡Inicio de sesión exitoso!');
+      setTimeout(() => {
+        this.ruta.navigate(['/inicio']);
+      }, 1000);
     } else {
       alert('Credenciales incorrectas. Inténtelo de nuevo.');
     }

@@ -7,6 +7,9 @@ export const routes: Routes = [
   { path: 'acerca-de',
     loadComponent: () => import('./components/aboutof/aboutof')
   },
+  { path: 'inicio',
+    loadComponent: () => import('./components/principal/pag-principal/pag-principal')
+  },
   {
     path: 'pedidos',
     redirectTo: 'pedidos/1',
