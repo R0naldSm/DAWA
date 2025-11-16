@@ -3,7 +3,7 @@ import { Pedido } from '../../../interfaces/pedido';
 import { TablaPedidos } from "../tabla-pedidos/tabla-pedidos";
 import { PedidoService } from '../../../services/pedidoService';
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Paginacion } from '../paginacion/paginacion';
 
 @Component({
@@ -15,8 +15,9 @@ import { Paginacion } from '../paginacion/paginacion';
 export default class ListaPedidos {
   // servicios 
   private pedidoService = inject(PedidoService)
-  // ruta activa
+  // ruta
   private rutaActiva = inject(ActivatedRoute)
+  private router = inject(Router)
   // formulario
   private form = inject(NonNullableFormBuilder)
 
@@ -24,6 +25,10 @@ export default class ListaPedidos {
   ngOnInit() {
     this.rutaActiva.params.subscribe(params => {
       this.pagina = parseInt(params['pagina']) || 1;
+    });
+
+    this.formBusqueda.get('nombre_proveedor')?.valueChanges.subscribe(() => {
+      this.router.navigate(['/pedidos', 1]);
     });
   }
 

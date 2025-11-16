@@ -2,15 +2,15 @@
   <ul class="pagination">
     <!--Pagina anterior-->
     <li class="page-item"[class.disabled]="pagina() <= 1">
-      <a [routerLink]="['/pedidos',pagina() - 1]" class="page-link"><</a>
+      <a [routerLink]="['/pedidos',pagina() - 1]" class="page-link text-success"><</a>
     </li>
     <!--Pagina actual-->
     <li class="page-item">
-      <a class="page-link" [routerLink]="['/pedidos',pagina()]">{{pagina()}}</a>
+      <a class="page-link text-success" [routerLink]="['/pedidos',pagina()]">{{pagina()}}</a>
     </li>
     <!--Pagina siguiente-->
     <li class="page-item" [class.disabled]="pagina() >= totalPaginas()">
-      <a [routerLink]="['/pedidos',pagina() + 1]" class="page-link">></a>
+      <a [routerLink]="['/pedidos',pagina() + 1]" class="page-link text-success">></a>
     </li>
   </ul>
 </nav>
