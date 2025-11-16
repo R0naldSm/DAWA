@@ -1,0 +1,32 @@
+<table class="table table-hover border shadow p-3 mb-5 bg-body-tertiary w-100" style="min-width: 1100px;">
+  <thead>
+    <tr class="text-center">
+      <th scope="col">#</th>
+      <th scope="col">Proveedor</th>
+      <th scope="col">Fecha del pedido</th>
+      <th scope="col">Fecha estima de entrega</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Total</th>
+      <th scope="col">Acciones</th>
+    </tr>
+    
+  </thead>
+
+  <tbody>
+    @for (pedido of pedidos(); track pedido.id_pedido) {
+      <tr>
+        <td scope="row">{{pedido.id_pedido}}</td>
+        <td>{{pedido.nombre_proveedor}}</td>
+        <td>{{pedido.fecha_creacion_pedido}}</td>
+        <td>{{pedido.fecha_estimada_entrega}}</td>
+        <td>{{pedido.estado}}</td>
+        <td>$ {{pedido.total}}</td>
+        <td class="d-flex gap-2">
+          <button class="btn btn-success">Enviar pedido</button>
+          <button class="btn btn-outline-primary">Ver información</button>
+          <button class="btn text-danger">Cancelar</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

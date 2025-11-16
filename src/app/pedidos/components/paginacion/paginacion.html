@@ -1,0 +1,16 @@
+<nav>
+  <ul class="pagination">
+    <!--Pagina anterior-->
+    <li class="page-item"[class.disabled]="pagina() <= 1">
+      <a [routerLink]="['/pedidos',pagina() - 1]" class="page-link"><</a>
+    </li>
+    <!--Pagina actual-->
+    <li class="page-item">
+      <a class="page-link" [routerLink]="['/pedidos',pagina()]">{{pagina()}}</a>
+    </li>
+    <!--Pagina siguiente-->
+    <li class="page-item" [class.disabled]="pagina() >= totalPaginas()">
+      <a [routerLink]="['/pedidos',pagina() + 1]" class="page-link">></a>
+    </li>
+  </ul>
+</nav>

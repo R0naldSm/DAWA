@@ -1,0 +1,16 @@
+<section class="mt-4 d-flex flex-column align-items-center min-vh-100">
+
+  <div>
+    <form [formGroup]="formBusqueda" class="mb-4 w-auto align-self-start text-start">
+      <h2 class="mb-4">Lista pedido</h2>
+
+      <label class="form-label">Buscar proveedor</label>
+      <input formControlName="nombre_proveedor" type="text" class="form-control">
+    </form>
+
+    <app-tabla-pedidos [pedidos]="listaPedidos(pagina)"/>
+  </div>
+
+  <app-paginacion class="mt-auto py-3" [pagina]="pagina" [totalPaginas]="totalPaginas()"/> 
+
+</section>
