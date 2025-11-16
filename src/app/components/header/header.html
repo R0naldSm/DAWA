@@ -3,8 +3,15 @@
     <i class="bi bi-box-seam me-2"></i>AgroDistribution
   </a>
 
-  <div class="ms-auto">
-    <button class="btn btn-outline-success me-2" (click)="mostrar_acerca_de()">Acerca de</button>
-    <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">Iniciar Sesión</button>
-  </div>
+  @if(!usuarioServicio.usuarioLogueado){
+    <div class="ms-auto">
+      <button class="btn btn-outline-success me-2" (click)="mostrar_acerca_de()">Acerca de</button>
+      <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">Iniciar Sesión</button>
+    </div>
+  } @else {
+    <div class="ms-auto">
+      <button class="btn btn-success me-2" [routerLink]="'/pedidos'">Pedidos</button>
+      <button class="btn btn-outline-success" (click)="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  }
 </nav>
