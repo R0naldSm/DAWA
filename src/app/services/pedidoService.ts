@@ -14,8 +14,7 @@ export class PedidoService {
       fecha_estimada_entrega: "2025-11-07",
       estado: "Entregado",
       total: 1900.00,
-      observaciones: "Compra de equipos de oficina",
-      productos: [1]
+      observaciones: "Compra de equipos de oficina"
     },
     {
       id_pedido: 2,
@@ -24,8 +23,7 @@ export class PedidoService {
       fecha_estimada_entrega: "2025-11-12",
       estado: "Pendiente",
       total: 114.00,
-      observaciones: "Fertilizantes para cultivo de pruebas",
-      productos: [2, 14]
+      observaciones: "Fertilizantes para cultivo de pruebas"
     },
     {
       id_pedido: 3,
@@ -34,8 +32,7 @@ export class PedidoService {
       fecha_estimada_entrega: "2025-11-09",
       estado: "En proceso",
       total: 390.00,
-      observaciones: "Materiales de construcción para almacén",
-      productos: [3, 12]
+      observaciones: "Materiales de construcción para almacén"
     },
     {
       id_pedido: 4,
@@ -45,7 +42,6 @@ export class PedidoService {
       estado: "Cancelado",
       total: 38.70,
       observaciones: "Pedido cancelado por falta de stock",
-      productos: [5]
     },
     {
       id_pedido: 5,
@@ -55,7 +51,6 @@ export class PedidoService {
       estado: "Entregado",
       total: 96.00,
       observaciones: "Routers para oficinas regionales",
-      productos: [13]
     },
     {
       id_pedido: 6,
@@ -65,7 +60,6 @@ export class PedidoService {
       estado: "En proceso",
       total: 74.97,
       observaciones: "Pedido de periféricos para nuevos equipos",
-      productos: [19]
     }
   ];
 

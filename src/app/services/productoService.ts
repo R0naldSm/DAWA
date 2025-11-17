@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Producto } from '../interfaces/productos';
+import { DetallePedido } from '../interfaces/detallePedido';
 
 @Injectable({
   providedIn: 'root',
@@ -165,6 +166,67 @@ export class ProductoService {
       unidadMedida: "botella (500ml)",
       precio: 6.80,
       disponibilidad: true
+    }
+  ];
+  private detallesPedido: DetallePedido[] = [
+    // Pedido 1 – Tech Solutions S.A.
+    {
+      idDetalle: 1,
+      idPedido: 1,
+      producto: "Laptop HP ProBook 450",
+      cantidad: 2,
+      precioUnitario: 950.00,
+      total: 1900.00
+    },
+
+    // Pedido 2 – AgroAndes
+    {
+      idDetalle: 2,
+      idPedido: 2,
+      producto: "Fertilizante Orgánico AndesGrow",
+      cantidad: 4,
+      precioUnitario: 28.50,
+      total: 114.00
+    },
+
+    // Pedido 3 – Construec
+    {
+      idDetalle: 3,
+      idPedido: 3,
+      producto: "Cemento Portland 50kg",
+      cantidad: 40,
+      precioUnitario: 9.75,
+      total: 390.00
+    },
+
+    // Pedido 4 – Medicorps
+    {
+      idDetalle: 4,
+      idPedido: 4,
+      producto: "Guantes de Latex Médicos",
+      cantidad: 3,
+      precioUnitario: 12.90,
+      total: 38.70
+    },
+
+    // Pedido 5 – GlobalNet
+    {
+      idDetalle: 5,
+      idPedido: 5,
+      producto: "Router Wi-Fi D-Link N300",
+      cantidad: 3,
+      precioUnitario: 32.00,
+      total: 96.00
+    },
+
+    // Pedido 6 – CompuStore
+    {
+      idDetalle: 6,
+      idPedido: 6,
+      producto: "Mouse Gamer RGB",
+      cantidad: 3,
+      precioUnitario: 24.99,
+      total: 74.97
     }
   ];
 
