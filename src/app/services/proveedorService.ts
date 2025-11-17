@@ -191,4 +191,10 @@ export class ProveedorService {
     return this.proveedores;
   }
 
+  getProveedorByNombre(nombre: string): Proveedor | undefined {
+    return this.proveedores.find(
+      proveedor => proveedor.nombreEmpresa.toLowerCase() === nombre.toLowerCase()
+    );
+  }
+
 }
