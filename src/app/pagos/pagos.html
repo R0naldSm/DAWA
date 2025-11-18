@@ -1,0 +1,222 @@
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-success">
+        <i class="bi bi-cash-coin"></i> Pagos y Finanzas
+      </h2>
+      <p class="text-muted">Seguimiento de pagos realizados a proveedores</p>
+    </div>
+  </div>
+
+  <!-- Cards de resumen -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card border-success">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Total Pagado</h6>
+          <h3 class="card-title text-success">${{ getTotalPorEstado('Pagado').toFixed(2) }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-warning">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Pendiente</h6>
+          <h3 class="card-title text-warning">${{ getTotalPorEstado('Pendiente').toFixed(2) }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-danger">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Vencido</h6>
+          <h3 class="card-title text-danger">${{ getTotalPorEstado('Vencido').toFixed(2) }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-primary">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Total</h6>
+          <h3 class="card-title text-primary">${{ getTotalPagos().toFixed(2) }}</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtros y búsqueda -->
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input 
+          type="text" 
+          class="form-control" 
+          placeholder="Buscar proveedor o concepto..."
+          [(ngModel)]="busqueda"
+          (ngModelChange)="aplicarFiltros()">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <select 
+        class="form-select" 
+        [(ngModel)]="filtroEstado"
+        (ngModelChange)="aplicarFiltros()">
+        <option value="Todos">Todos los estados</option>
+        <option value="Pagado">Pagado</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Vencido">Vencido</option>
+      </select>
+    </div>
+    <div class="col-md-5 text-end">
+      <button class="btn btn-success" (click)="abrirModal()">
+        <i class="bi bi-plus-circle"></i> Registrar Pago
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabla de pagos -->
+  <div class="card">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Proveedor</th>
+              <th>Concepto</th>
+              <th>Fecha</th>
+              <th>Monto</th>
+              <th>Estado</th>
+              <th>Método</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pago of pagosFiltrados">
+              <td>{{ pago.id }}</td>
+              <td><strong>{{ pago.proveedor }}</strong></td>
+              <td>{{ pago.concepto }}</td>
+              <td>{{ pago.fecha }}</td>
+              <td><strong>${{ pago.monto.toFixed(2) }}</strong></td>
+              <td>
+                <span [ngClass]="getEstadoClass(pago.estado)">
+                  {{ pago.estado }}
+                </span>
+              </td>
+              <td>{{ pago.metodoPago || '-' }}</td>
+              <td>
+                <button 
+                  *ngIf="pago.estado === 'Pendiente'"
+                  class="btn btn-sm btn-success me-1" 
+                  (click)="marcarComoPagado(pago)"
+                  title="Marcar como pagado">
+                  <i class="bi bi-check-circle"></i>
+                </button>
+                <button 
+                  class="btn btn-sm btn-danger" 
+                  (click)="eliminarPago(pago.id)"
+                  title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="pagosFiltrados.length === 0" class="text-center py-5 text-muted">
+          <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+          <p class="mt-2">No se encontraron pagos</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para registrar pago -->
+<div class="modal" [class.show]="mostrarModal" [style.display]="mostrarModal ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Registrar Nuevo Pago</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Proveedor *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="nuevoPago.proveedor"
+              name="proveedor"
+              required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Concepto *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              [(ngModel)]="nuevoPago.concepto"
+              name="concepto"
+              required>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Monto ($) *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                [(ngModel)]="nuevoPago.monto"
+                name="monto"
+                min="0"
+                step="0.01"
+                required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Fecha *</label>
+              <input 
+                type="date" 
+                class="form-control" 
+                [(ngModel)]="nuevoPago.fecha"
+                name="fecha"
+                required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Estado *</label>
+              <select 
+                class="form-select" 
+                [(ngModel)]="nuevoPago.estado"
+                name="estado">
+                <option value="Pendiente">Pendiente</option>
+                <option value="Pagado">Pagado</option>
+                <option value="Vencido">Vencido</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Método de Pago</label>
+              <select 
+                class="form-select" 
+                [(ngModel)]="nuevoPago.metodoPago"
+                name="metodoPago">
+                <option value="">Seleccionar...</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="button" class="btn btn-success" (click)="guardarPago()">Guardar Pago</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade" [class.show]="mostrarModal" *ngIf="mostrarModal"></div>
