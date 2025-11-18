@@ -1,0 +1,234 @@
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="text-success">
+        <i class="bi bi-speedometer2"></i> Dashboard General
+      </h2>
+      <p class="text-muted">Reportes, gráficos y métricas del sistema</p>
+    </div>
+  </div>
+
+  <!-- Cards de estadísticas -->
+  <div class="row mb-4">
+    <div class="col-lg-4 col-md-6 mb-3" *ngFor="let stat of estadisticas">
+      <div class="card h-100 border-{{stat.color}} shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="text-muted mb-2">{{ stat.titulo }}</h6>
+              <h2 class="mb-0 text-{{stat.color}}">{{ stat.valor }}</h2>
+              <small class="text-muted" *ngIf="stat.cambio">
+                <i class="bi bi-arrow-up-short"></i> {{ stat.cambio }}
+              </small>
+            </div>
+            <div class="bg-{{stat.color}} bg-opacity-10 rounded p-3">
+              <i class="bi {{stat.icono}} text-{{stat.color}}" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos y datos -->
+  <div class="row mb-4">
+    <!-- Gráfico de ventas mensuales -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-graph-up"></i> Ventas Mensuales
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="chart-container" style="height: 300px;">
+            <div class="d-flex align-items-end justify-content-around h-100 pb-3">
+              <div *ngFor="let venta of ventasMensuales" class="text-center" style="flex: 1;">
+                <div 
+                  class="bg-success rounded-top mx-2 position-relative"
+                  [style.height.%]="getAlturaGrafico(venta.ventas)"
+                  [attr.data-bs-toggle]="'tooltip'"
+                  [attr.title]="'$' + venta.ventas.toLocaleString()">
+                  <span 
+                    class="position-absolute top-0 start-50 translate-middle badge bg-dark"
+                    style="margin-top: -10px;">
+                    ${{(venta.ventas/1000).toFixed(1)}}k
+                  </span>
+                </div>
+                <small class="text-muted mt-2 d-block">{{ venta.mes }}</small>
+              </div>
+            </div>
+          </div>
+          <div class="text-center mt-3">
+            <p class="text-muted mb-0">Últimos 6 meses</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Productos más populares -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-star-fill"></i> Productos Populares
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="mb-3" *ngFor="let producto of productosPopulares">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="fw-bold">{{ producto.nombre }}</span>
+              <span class="badge bg-{{producto.color}}">{{ producto.cantidad }}</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div 
+                class="progress-bar bg-{{producto.color}}" 
+                [style.width.%]="getPorcentajeProducto(producto.cantidad)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pedidos recientes y alertas -->
+  <div class="row">
+    <!-- Tabla de pedidos recientes -->
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-clock-history"></i> Pedidos Recientes
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Producto</th>
+                  <th>Proveedor</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pedido of pedidosRecientes">
+                  <td><strong>#{{ pedido.id }}</strong></td>
+                  <td>{{ pedido.producto }}</td>
+                  <td>{{ pedido.proveedor }}</td>
+                  <td>{{ pedido.fecha }}</td>
+                  <td>
+                    <span [ngClass]="getEstadoClass(pedido.estado)">
+                      {{ pedido.estado }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de alertas y notificaciones -->
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-warning">
+          <h5 class="mb-0">
+            <i class="bi bi-bell-fill"></i> Alertas y Notificaciones
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <div>
+              <strong>Pagos Vencidos</strong>
+              <p class="mb-0 small">Tienes 2 pagos vencidos por revisar</p>
+            </div>
+          </div>
+          
+          <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
+            <i class="bi bi-box-seam me-2"></i>
+            <div>
+              <strong>Stock Bajo</strong>
+              <p class="mb-0 small">3 productos con inventario crítico</p>
+            </div>
+          </div>
+          
+          <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
+            <i class="bi bi-truck me-2"></i>
+            <div>
+              <strong>Entregas Hoy</strong>
+              <p class="mb-0 small">4 pedidos programados para entrega</p>
+            </div>
+          </div>
+          
+          <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <div>
+              <strong>Sistema Actualizado</strong>
+              <p class="mb-0 small">Última actualización: Hoy</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accesos rápidos -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">
+            <i class="bi bi-lightning-fill"></i> Accesos Rápidos
+          </h5>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-success w-100">
+                <i class="bi bi-plus-circle d-block" style="font-size: 2rem;"></i>
+                <small>Nuevo Proveedor</small>
+              </button>
+            </div>
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-primary w-100">
+                <i class="bi bi-box-seam d-block" style="font-size: 2rem;"></i>
+                <small>Nuevo Producto</small>
+              </button>
+            </div>
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-info w-100">
+                <i class="bi bi-cart-plus d-block" style="font-size: 2rem;"></i>
+                <small>Crear Pedido</small>
+              </button>
+            </div>
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-warning w-100">
+                <i class="bi bi-cash-coin d-block" style="font-size: 2rem;"></i>
+                <small>Registrar Pago</small>
+              </button>
+            </div>
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-danger w-100">
+                <i class="bi bi-file-text d-block" style="font-size: 2rem;"></i>
+                <small>Ver Reportes</small>
+              </button>
+            </div>
+            <div class="col-md-2 col-sm-4 col-6 mb-3">
+              <button class="btn btn-outline-dark w-100">
+                <i class="bi bi-gear d-block" style="font-size: 2rem;"></i>
+                <small>Configuración</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
