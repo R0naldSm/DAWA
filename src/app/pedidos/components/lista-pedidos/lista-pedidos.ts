@@ -8,7 +8,7 @@ import { Paginacion } from '../paginacion/paginacion';
 
 @Component({
   selector: 'app-lista-pedidos',
-  imports: [TablaPedidos, ReactiveFormsModule, Paginacion],
+  imports: [TablaPedidos, ReactiveFormsModule, Paginacion, RouterLink],
   templateUrl: './lista-pedidos.html',
   styleUrl: './lista-pedidos.css',
 })

@@ -33,4 +33,8 @@ export class TablaPedidos {
   cancelar(idPedido: number){
     this.pedidoService.cancelarPedido(idPedido)
   }
+
+  enviar(){
+    alert("Pedido enviado")
+  }
 }

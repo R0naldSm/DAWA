@@ -22,7 +22,7 @@
         <td>{{pedido.estado}}</td>
         <td>$ {{pedido.total}}</td>
         <td class="d-flex gap-2">
-          <button class="btn btn-success">Enviar pedido</button>
+          <button class="btn btn-success" (click)="enviar()">Enviar pedido</button>
           <button class="btn btn-outline-primary" 
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"

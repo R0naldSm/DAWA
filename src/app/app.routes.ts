@@ -18,6 +18,10 @@ export const routes: Routes = [
     path: 'pedidos/:pagina',
     loadComponent: () => import('./pedidos/components/lista-pedidos/lista-pedidos')
   },
+  {
+    path: 'pedido/crear',
+    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
+  },
   { path: '**', 
     redirectTo: '' 
   }

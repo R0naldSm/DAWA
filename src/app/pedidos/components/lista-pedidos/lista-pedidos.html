@@ -2,7 +2,10 @@
 
   <div>
     <form [formGroup]="formBusqueda" class="mb-4 w-auto align-self-start text-start">
-      <h2 class="mb-4">Lista pedido</h2>
+      <div class="d-flex">
+        <h2 class="mb-4">Lista pedido</h2>
+        <button class="ms-auto btn btn-success h-50" [routerLink]="['/pedido/crear']">Nuevo pedido</button>
+      </div>
 
       <label class="form-label">Buscar proveedor</label>
       <input formControlName="nombre_proveedor" type="text" class="form-control">
