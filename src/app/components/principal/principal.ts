@@ -1,0 +1,12 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from "@angular/router";
+
+@Component({
+  selector: 'app-principal',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './principal.html',
+  styleUrls: ['./principal.css'],
+})
+export default class Principal {}

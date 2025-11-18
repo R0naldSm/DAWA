@@ -7,8 +7,8 @@ export const routes: Routes = [
   { path: 'acerca-de',
     loadComponent: () => import('./components/aboutof/aboutof')
   },
-  { path: 'inicio',
-    loadComponent: () => import('./components/principal/pag-principal/pag-principal')
+  { path: 'principal',
+    loadComponent: () => import('./components/principal/principal')
   },
   {
     path: 'pedidos',
@@ -21,6 +21,14 @@ export const routes: Routes = [
   {
     path: 'pedido/crear',
     loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
+  },
+  {
+    path: 'pagos',
+    loadComponent: () => import('./pagos/pagos')
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./dashboard/dashboard')
   },
   { path: '**', 
     redirectTo: '' 

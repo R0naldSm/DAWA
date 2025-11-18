@@ -1,0 +1,7 @@
+.table-hover tbody tr:hover {
+  background-color: #f0fff4;
+}
+
+button {
+  border-radius: 8px;
+}

@@ -1,28 +1,37 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { UsuarioServicio } from '../../services/usuario-servicio';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from './../../services/auth';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.html',
-  styleUrl: './header.css',
+  styleUrls: ['./header.css'],
 })
-export default class Header {
-  constructor(private rutasPages: Router, protected usuarioServicio: UsuarioServicio) {}
+export class Header {
+
+  logueado = false;
+  nombreUsuario = '';
+
+  constructor(private auth: AuthService, private router: Router) {
+
+    // Observar el estado global
+    this.auth.logueado$.subscribe(val => this.logueado = val);
+    this.auth.nombreUsuario$.subscribe(name => this.nombreUsuario = name);
+  }
 
   mostrar_acerca_de() {
-    this.rutasPages.navigate(['acerca-de']);
-  }
-  mostrar_iniciar_sesion() {
-    this.rutasPages.navigate(['']);
+    this.router.navigate(['/acerca-de']);
   }
 
-  cerrarSesion(){
-    this.usuarioServicio.usuarioLogueado = {
-      usuario: '',
-      password: ''
-    };
-    this.rutasPages.navigate(['']);
+  mostrar_iniciar_sesion() {
+    this.router.navigate(['/']);
+  }
+
+  cerrar_sesion() {
+    this.auth.logout();
+    this.router.navigate(['/']);
   }
 }

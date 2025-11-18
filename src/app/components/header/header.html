@@ -3,19 +3,30 @@
     <i class="bi bi-box-seam me-2"></i>AgroDistribution
   </a>
 
-  @if(usuarioServicio.usuarioLogueado.usuario == '' && usuarioServicio.usuarioLogueado.password == '') {
-    <div class="ms-auto">
-      <button class="btn btn-outline-success me-2" (click)="mostrar_acerca_de()">Acerca de</button>
-      <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">Iniciar Sesión</button>
-    </div>
-  } @else {
-    <div class="ms-auto d-flex align-items-center">
-      <button class="btn btn-success me-2" [routerLink]="'/pedidos'">Pedidos</button>
-      <button class="btn btn-outline-success" (click)="cerrarSesion()">Cerrar Sesión</button>
-      <div class="text-success d-flex align-items-center">
-        <i class="bi bi-person-circle fs-4 ms-3"></i>
-        <span class="ms-3">{{usuarioServicio.usuarioLogueado.usuario }}</span>
-      </div>
-    </div>
-  }
+  <div class="ms-auto d-flex align-items-center">
+
+    <!-- Botón Acerca de -->
+    <button class="btn btn-outline-success me-3" (click)="mostrar_acerca_de()">
+      Acerca de
+    </button>
+
+    <!-- Si no estuviera logueado -->
+    <ng-container *ngIf="!logueado">
+      <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">
+        Iniciar Sesión
+      </button>
+    </ng-container>
+
+    <!-- Verificamos si loguea -->
+    <ng-container *ngIf="logueado">
+      <span class="me-3 fw-semibold text-success">
+        👤 {{ nombreUsuario }}
+      </span>
+
+      <button class="btn btn-danger" (click)="cerrar_sesion()">
+        Cerrar Sesión
+      </button>
+    </ng-container>
+
+  </div>
 </nav>

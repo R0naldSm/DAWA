@@ -27,10 +27,10 @@ interface Producto {
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  templateUrl: './dashboard.html',
+  styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent implements OnInit {
+export default class DashboardComponent implements OnInit {
   estadisticas: Estadistica[] = [];
   pedidosRecientes: Pedido[] = [];
   productosPopulares: Producto[] = [];

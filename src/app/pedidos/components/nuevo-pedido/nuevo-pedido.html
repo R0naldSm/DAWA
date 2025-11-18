@@ -1,1 +1,68 @@
-<p>nuevo-pedido works!</p>
+<div class="container mt-5">
+  <h4 class="card-title mb-4">Crear nuevo pedido</h4>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                
+                <form>
+                    <!-- Datos Básicos Section -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary mb-3">Datos Básicos</h6>
+                        
+                        <div class="row g-3">
+                            <!-- Proveedor -->
+                            <div class="col-md-6">
+                                <label for="proveedor" class="form-label">Proveedor</label>
+                                <select class="form-select" id="proveedor">
+                                    <option value="" selected>Seleccione un proveedor</option>
+                                    <option value="1">Proveedor 1</option>
+                                    <option value="2">Proveedor 2</option>
+                                    <option value="3">Proveedor 3</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Fecha de entrega estimada -->
+                            <div class="col-md-6">
+                                <label class="form-label">Fecha de entrega estimada</label>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <select class="form-select" id="dia">
+                                            <option value="" selected>día</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-select" id="mes">
+                                            <option value="" selected>mes</option>
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4">
+                                        <select class="form-select" id="año">
+                                            <option value="" selected>año</option>
+                                            <option value="2024">2024</option>
+                                            <option value="2025">2025</option>
+                                            <option value="2026">2026</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Observaciones -->
+                    <div class="mb-4">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" rows="4" placeholder="Ingrese observaciones adicionales"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>

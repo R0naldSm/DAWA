@@ -1,34 +1,43 @@
-import { Component, inject } from '@angular/core';
-import { UsuarioServicio } from '../../services/usuario-servicio';
+import { AuthService } from './../../services/auth';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['./login.css'],
 })
 export default class Login {
-  private usuarioServicio = inject(UsuarioServicio)
-  private ruta = inject(Router);
+
+  usuario: string = '';
+  clave: string = '';
+
+  constructor(private auth: AuthService, private router: Router) {}
 
   login() {
-    const usuario = (document.getElementById('usuario') as HTMLInputElement).value;
-    const contrasena = (document.getElementById('clave') as HTMLInputElement).value;
+    alert('Se procederá a validar las credenciales de acceso');
 
-    if (!usuario || !contrasena) {
+    if (!this.usuario || !this.clave) {
       alert('Por favor, complete todos los campos.');
       return;
     }
-    if (contrasena.length < 6) {
+
+    if (this.clave.length < 6) {
       alert('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
-    if (this.usuarioServicio.login(usuario, contrasena)) {
+
+    const acceso = this.auth.login(this.usuario.trim(), this.clave);
+
+    if (acceso) {
       alert('¡Inicio de sesión exitoso!');
-      setTimeout(() => {
-        this.ruta.navigate(['/inicio']);
-      }, 1000);
+
+      // Redirigir a la página principal
+      this.router.navigate(['/principal']);
     } else {
       alert('Credenciales incorrectas. Inténtelo de nuevo.');
     }

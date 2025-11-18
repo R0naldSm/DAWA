@@ -16,10 +16,10 @@ interface Pago {
   selector: 'app-pagos',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './pagos.component.html',
-  styleUrls: ['./pagos.component.css']
+  templateUrl: './pagos.html',
+  styleUrls: ['./pagos.css']
 })
-export class PagosComponent implements OnInit {
+export default class PagosComponent implements OnInit {
   pagos: Pago[] = [];
   pagosFiltrados: Pago[] = [];
   filtroEstado: string = 'Todos';

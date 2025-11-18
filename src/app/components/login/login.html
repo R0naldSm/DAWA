@@ -6,14 +6,26 @@
 
     <div class="mb-3">
       <label for="usuario" class="form-label text-secondary">Usuario</label>
-      <input type="text" id="usuario" class="form-control" placeholder="Ingrese su usuario">
+      <input
+        type="text"
+        id="usuario"
+        class="form-control"
+        [(ngModel)]="usuario"
+        placeholder="Ingrese su usuario">
     </div>
 
     <div class="mb-3">
       <label for="clave" class="form-label text-secondary">Clave</label>
-      <input type="password" id="clave" class="form-control" placeholder="Ingrese su clave">
+      <input
+        type="password"
+        id="clave"
+        class="form-control"
+        [(ngModel)]="clave"
+        placeholder="Ingrese su clave">
     </div>
 
-    <button class="btn btn-success w-100 mt-2" (click)="login()">Aceptar</button>
+    <button class="btn btn-success w-100 mt-2" (click)="login()">
+      Aceptar
+    </button>
   </div>
 </div>
