@@ -27,7 +27,7 @@
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"
                   (click)="seleccionarPedido(pedido)">Ver información</button>
-          <button class="btn text-danger">Cancelar</button>
+          <button class="btn text-danger" (click)="cancelar(pedido.id_pedido)">Cancelar</button>
         </td>
       </tr>
     }

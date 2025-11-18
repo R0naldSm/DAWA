@@ -135,4 +135,10 @@ export class PedidoService {
       detalle => detalle.idPedido === id_pedido
     );
   }
+
+  cancelarPedido(idPedido: number){
+    this.pedidos = this.pedidos.filter(
+      pedido => pedido.id_pedido !== idPedido
+    );
+  }
 }

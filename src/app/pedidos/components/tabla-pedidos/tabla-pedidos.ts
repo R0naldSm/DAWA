@@ -24,10 +24,13 @@ export class TablaPedidos {
   productosPedidos: DetallePedido[] = [];
 
 
-
   seleccionarPedido(pedido: Pedido) {
     this.pedidoSeleccionado = pedido;
     this.infoProveedor = this.proveedorService.getProveedorByNombre(pedido.nombre_proveedor)
     this.productosPedidos = this.pedidoService.getDetallesByPedido(pedido.id_pedido)
+  }
+
+  cancelar(idPedido: number){
+    this.pedidoService.cancelarPedido(idPedido)
   }
 }
