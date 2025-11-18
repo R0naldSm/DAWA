@@ -38,34 +38,9 @@
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <!--cabezera-->
-      <div class="d-flex px-3 pt-3">
-        <h2 class="modal-title fs-5 fw-bold" id="staticBackdropLabel">{{infoProveedor?.nombreEmpresa}}</h2>
-        <button class="ms-auto btn btn-primary">Editar</button>
-      </div>
-      <p class="ps-3 fs-6">RUC: {{infoProveedor?.ruc}}</p>
-      <!--cuerpo (informacion del proveedor)-->
-      <span class="ps-3 fs-6 fw-bold">Datos del proveedor</span>
-      <hr class="mx-3 mt-0">
-      <div class="ps-3">
-        <p><span class="fw-semibold">Persona de contacto:</span> {{infoProveedor?.personaContacto}}</p>
-        <p><span class="fw-semibold">Teléfono:</span> {{infoProveedor?.telefono}}</p>
-        <p><span class="fw-semibold">correo electrónico:</span> {{infoProveedor?.correo}}</p>
-      </div>
-
-      <!--cuerpo (informacion de pedido)-->
-      <span class="ps-3 fs-6 fw-bold">Detalles del pedido</span>
-      <hr class="mx-3 mt-0">
-      <div class="ps-3">
-        <p><span class="fw-semibold">ID del pedido:</span> {{pedidoSeleccionado?.id_pedido}}</p>
-        <p><span class="fw-semibold">Fecha de pedido:</span> {{pedidoSeleccionado?.fecha_creacion_pedido}}</p>
-        <p><span class="fw-semibold">Fecha estimada de entrega:</span> {{pedidoSeleccionado?.fecha_estimada_entrega}}</p>
-      </div>
-
-      <!--cuerpo (productos del pedido)-->
-      <span class="ps-3 fs-6 fw-bold">Productos del pedido</span>
-
       
+      <app-info-pedido class="ps-3" [pedidoSeleccionado]="pedidoSeleccionado" [infoProveedor]="infoProveedor" [productosPedidos]="productosPedidos"/>
+
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>

@@ -1,0 +1,33 @@
+<!--cabezera-->
+      <div class="d-flex px-3 pt-3">
+        <h2 class="modal-title fs-5 fw-bold" id="staticBackdropLabel">{{infoProveedor()?.nombreEmpresa}}</h2>
+        <button class="ms-auto btn btn-primary">Editar</button>
+      </div>
+      <p class="ps-3 fs-6">RUC: {{infoProveedor()?.ruc}}</p>
+      <!--cuerpo (informacion del proveedor)-->
+      <span class="ps-3 fs-6 fw-bold">Datos del proveedor</span>
+      <hr class="mx-3 mt-0">
+      <div class="ps-3">
+        <p><span class="fw-semibold">Persona de contacto:</span> {{infoProveedor()?.personaContacto}}</p>
+        <p><span class="fw-semibold">Teléfono:</span> {{infoProveedor()?.telefono}}</p>
+        <p><span class="fw-semibold">correo electrónico:</span> {{infoProveedor()?.correo}}</p>
+      </div>
+
+      <!--cuerpo (informacion de pedido)-->
+      <span class="ps-3 fs-6 fw-bold">Detalles del pedido</span>
+      <hr class="mx-3 mt-0">
+      <div class="ps-3">
+        <p><span class="fw-semibold">ID del pedido:</span> {{pedidoSeleccionado()?.id_pedido}}</p>
+        <p><span class="fw-semibold">Fecha de pedido:</span> {{pedidoSeleccionado()?.fecha_creacion_pedido}}</p>
+        <p><span class="fw-semibold">Fecha estimada de entrega:</span> {{pedidoSeleccionado()?.fecha_estimada_entrega}}</p>
+      </div>
+
+      <!--cuerpo (productos del pedido)-->
+      <span class="ps-3 fs-6 fw-bold">Productos del pedido</span>
+      <app-tabla-detalle-pedidos class="mx-2" [detallePedido]="productosPedidos()"/>
+      <p class="fs-2"><span class="fw-bold">Total:</span> {{pedidoSeleccionado()?.total}}</p>
+
+      <!--Observaciones-->
+      <span class="ps-3 fs-6 fw-bold">Observaciones</span>
+      <hr class="mx-3 mt-0">
+      <p class="ps-3">{{pedidoSeleccionado()?.observaciones}}</p>
