@@ -30,6 +30,10 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard')
   },
+  {
+    path: 'proveedores',
+    loadComponent: () => import('./components/proveedores/proveedores')
+  },
   { path: '**', 
     redirectTo: '' 
   }

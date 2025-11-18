@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './proveedores.html',
   styleUrls: ['./proveedores.css'],
 })
-export class Proveedores {
+export default class Proveedores {
 
   proveedores = [
     { nombre: 'AgroFertilizantes S.A.', ruc: '0999999999', telefono: '0987654321' },
