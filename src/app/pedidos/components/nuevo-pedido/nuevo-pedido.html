@@ -66,3 +66,57 @@
             </div>
         </div>
     </div>
+
+<!--segunda parte-->
+
+<div class="container mt-2">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Información de productos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label for="producto" class="form-label">Producto</label>
+                        <select class="form-select" id="producto">
+                            <option value="">Seleccione un producto...</option>
+                            <option value="1">Producto 1</option>
+                            <option value="2">Producto 2</option>
+                            <option value="3">Producto 3</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="cantidad" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidad" min="1" value="1">
+                    </div>
+                </div>
+
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio unitario</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProductos">
+                            <tr class="text-muted">
+                                <td colspan="5" class="text-center">No hay productos agregados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-end mb-3">
+                    <h4 class="mb-0">Total: <span id="total" class="text-primary">$0.00</span></h4>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn btn-primary btn-lg px-5">Crear pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
