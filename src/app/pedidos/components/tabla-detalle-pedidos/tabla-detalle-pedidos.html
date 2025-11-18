@@ -1,0 +1,22 @@
+<table class="table border mb-5 bg-body-tertiary">
+  <thead>
+    <tr class="text-center">
+      <th scope="col">Producto</th>
+      <th scope="col">Cantidad</th>
+      <th scope="col">Precio unitario</th>
+      <th scope="col">SubTotal</th>
+    </tr>
+    
+  </thead>
+
+  <tbody>
+    @for (producto of detallePedido(); track producto.idDetalle) {
+      <tr>
+        <td scope="row">{{producto.producto}}</td>
+        <td>{{producto.cantidad}}</td>
+        <td>{{producto.precioUnitario}}</td>
+        <td>{{producto.total}}</td>
+      </tr>
+    }
+  </tbody>
+</table>

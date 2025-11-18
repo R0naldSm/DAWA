@@ -23,10 +23,27 @@
         <td>$ {{pedido.total}}</td>
         <td class="d-flex gap-2">
           <button class="btn btn-success">Enviar pedido</button>
-          <button class="btn btn-outline-primary">Ver información</button>
+          <button class="btn btn-outline-primary" 
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                  (click)="seleccionarPedido(pedido)">Ver información</button>
           <button class="btn text-danger">Cancelar</button>
         </td>
       </tr>
     }
   </tbody>
 </table>
+
+<!--Modal-->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      
+      <app-info-pedido class="ps-3" [pedidoSeleccionado]="pedidoSeleccionado" [infoProveedor]="infoProveedor" [productosPedidos]="productosPedidos"/>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

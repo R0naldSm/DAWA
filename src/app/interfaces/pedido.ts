@@ -6,5 +6,4 @@ export interface Pedido {
   estado: string;
   total: number;
   observaciones: string;
-  productos: number[];
 }
