@@ -34,7 +34,23 @@ export const routes: Routes = [
     path: 'proveedores',
     loadComponent: () => import('./components/proveedores/proveedores')
   },
-  { path: '**', 
-    redirectTo: '' 
+  {
+    path: 'productos',
+    loadComponent: () => import('./productos/components/productos-list/productos-list.component')
+  },
+  {
+    path: 'productos/crear',
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component')
+  },
+  {
+    path: 'productos/:id/editar',
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component')
+  },
+  {
+    path: 'productos/:id',
+    loadComponent: () => import('./productos/components/productos-detalle/productos-detalle.component')
+  },
+  { path: '**',
+    redirectTo: ''
   }
 ];

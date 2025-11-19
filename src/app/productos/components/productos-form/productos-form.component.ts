@@ -51,15 +51,18 @@ export default class ProductosFormComponent {
   }
 
   guardar() {
+    const v = this.form.getRawValue();
     const payload: Producto = {
       id: this.productoId,
-      proveedorId: Number(this.form.value.proveedorId),
-      nombre: this.form.value.nombre,
-      descripcion: this.form.value.descripcion,
-      unidadMedida: this.form.value.unidadMedida,
-      precio: Number(this.form.value.precio),
-      disponible: Boolean(this.form.value.disponible),
-      disponibilidad: Boolean(this.form.value.disponible),
+      proveedorId: Number(v.proveedorId ?? 0),
+      id_proveedor: Number(v.proveedorId ?? 0),
+      nombre: String(v.nombre ?? ''),
+      nombreProducto: String(v.nombre ?? ''),
+      descripcion: String(v.descripcion ?? ''),
+      unidadMedida: String(v.unidadMedida ?? ''),
+      precio: Number(v.precio ?? 0),
+      disponible: Boolean(v.disponible ?? true),
+      disponibilidad: Boolean(v.disponible ?? true),
     };
 
     if (this.productoId) {

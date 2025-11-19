@@ -168,7 +168,78 @@ export class ProductoService {
     }
   ];
 
+  private nextId = 1;
+
+  constructor() {
+    // Asignar IDs y campos de compatibilidad al iniciar
+    this.productos = this.productos.map((p, index) => ({
+      ...p,
+      id: index + 1,
+      proveedorId: p.id_proveedor,
+      nombre: p.nombreProducto,
+      disponible: p.disponibilidad,
+    }));
+    this.nextId = this.productos.length + 1;
+  }
+
   getProductos(): Producto[] {
-      return this.productos;
-    }
+    return this.productos;
+  }
+
+  getByProveedor(idProveedor: number): Producto[] {
+    return this.productos.filter(p => (p.id_proveedor === idProveedor) || (p.proveedorId === idProveedor));
+  }
+
+  getById(id: number): Producto | undefined {
+    return this.productos.find(p => p.id === id);
+  }
+
+  create(payload: Producto): Producto {
+    const nuevo: Producto = {
+      id: this.nextId++,
+      id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? 0,
+      proveedorId: payload.proveedorId ?? payload.id_proveedor ?? 0,
+      nombreProducto: payload.nombre ?? payload.nombreProducto ?? '',
+      nombre: payload.nombre ?? payload.nombreProducto ?? '',
+      descripcion: payload.descripcion ?? '',
+      unidadMedida: payload.unidadMedida ?? '',
+      precio: payload.precio ?? 0,
+      disponibilidad: payload.disponible ?? payload.disponibilidad ?? true,
+      disponible: payload.disponible ?? payload.disponibilidad ?? true,
+    };
+    this.productos.push(nuevo);
+    return nuevo;
+  }
+
+  update(payload: Producto): void {
+    if (!payload.id) return;
+    const idx = this.productos.findIndex(p => p.id === payload.id);
+    if (idx === -1) return;
+    const actual = this.productos[idx];
+    const actualizado: Producto = {
+      ...actual,
+      id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? actual.id_proveedor,
+      proveedorId: payload.proveedorId ?? payload.id_proveedor ?? actual.proveedorId,
+      nombreProducto: payload.nombre ?? payload.nombreProducto ?? actual.nombreProducto,
+      nombre: payload.nombre ?? payload.nombreProducto ?? actual.nombre,
+      descripcion: payload.descripcion ?? actual.descripcion,
+      unidadMedida: payload.unidadMedida ?? actual.unidadMedida,
+      precio: payload.precio ?? actual.precio,
+      disponibilidad: payload.disponible ?? payload.disponibilidad ?? actual.disponibilidad,
+      disponible: payload.disponible ?? payload.disponibilidad ?? actual.disponible,
+    };
+    this.productos[idx] = actualizado;
+  }
+
+  delete(id: number): void {
+    this.productos = this.productos.filter(p => p.id !== id);
+  }
+
+  toggleDisponibilidad(id: number): void {
+    const p = this.getById(id);
+    if (!p) return;
+    const nueva = !(p.disponible ?? p.disponibilidad);
+    p.disponibilidad = nueva;
+    p.disponible = nueva;
+  }
 }
