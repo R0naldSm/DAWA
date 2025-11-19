@@ -1,0 +1,54 @@
+
+<section class="mt-4 d-flex flex-column align-items-center min-vh-100">
+
+	<div>
+		<form [formGroup]="formBusqueda" class="mb-4 w-auto align-self-start text-start">
+			<h2 class="mb-4">Lista de Productos</h2>
+
+			<label class="form-label">Buscar proveedor (id o texto)</label>
+			<input formControlName="proveedor" type="text" class="form-control" />
+			<div class="mt-2">
+				<button class="btn btn-success btn-sm" (click)="irCrear()">Crear producto</button>
+			</div>
+		</form>
+
+		<table class="table table-hover border shadow p-3 mb-5 bg-body-tertiary w-100" style="min-width: 1100px;">
+			<thead>
+				<tr class="text-center">
+					<th scope="col">#</th>
+					<th scope="col">Proveedor</th>
+					<th scope="col">Nombre</th>
+					<th scope="col">Unidad</th>
+					<th scope="col">Precio</th>
+					<th scope="col">Disponible</th>
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@for (p of productos().slice((pagina - 1) * 10, (pagina - 1) * 10 + 10); track p.id) {
+					<tr>
+						<td scope="row">{{p.id}}</td>
+						<td>{{p.id_proveedor || p.proveedorId}}</td>
+						<td>{{p.nombre || p.nombreProducto}}</td>
+						<td>{{p.unidadMedida}}</td>
+						<td>$ {{p.precio}}</td>
+						<td>{{ (p.disponible ?? p.disponibilidad) ? 'Sí' : 'No' }}</td>
+						<td class="d-flex gap-2">
+							<button class="btn btn-outline-primary btn-sm" (click)="editar(p.id)">Editar</button>
+							<button class="btn btn-danger btn-sm" (click)="eliminar(p.id)">Eliminar</button>
+							<button class="btn btn-success btn-sm" (click)="toggle(p.id)">{{ (p.disponible ?? p.disponibilidad) ? 'Desactivar' : 'Activar' }}</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<div class="mt-auto py-3 d-flex align-items-center gap-3">
+		<button class="btn btn-secondary btn-sm" (click)="anterior()">Anterior</button>
+		<span> Página {{pagina}} de {{ totalPaginas() }} </span>
+		<button class="btn btn-secondary btn-sm" (click)="siguiente()">Siguiente</button>
+	</div>
+
+</section>

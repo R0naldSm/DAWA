@@ -1,0 +1,39 @@
+<section class="mt-4 d-flex flex-column align-items-center min-vh-100">
+  <div class="w-75">
+    <h2 class="mb-4">Detalle de Producto</h2>
+
+    <div *ngIf="producto; else sinProducto">
+      <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">{{producto.id}}</dd>
+
+        <dt class="col-sm-3">Proveedor</dt>
+        <dd class="col-sm-9">{{producto.id_proveedor || producto.proveedorId}}</dd>
+
+        <dt class="col-sm-3">Nombre</dt>
+        <dd class="col-sm-9">{{producto.nombre || producto.nombreProducto}}</dd>
+
+        <dt class="col-sm-3">Descripción</dt>
+        <dd class="col-sm-9">{{producto.descripcion}}</dd>
+
+        <dt class="col-sm-3">Unidad</dt>
+        <dd class="col-sm-9">{{producto.unidadMedida}}</dd>
+
+        <dt class="col-sm-3">Precio</dt>
+        <dd class="col-sm-9">$ {{producto.precio}}</dd>
+
+        <dt class="col-sm-3">Disponible</dt>
+        <dd class="col-sm-9">{{ (producto.disponible ?? producto.disponibilidad) ? 'Sí' : 'No' }}</dd>
+      </dl>
+
+      <div class="d-flex gap-2">
+        <button class="btn btn-secondary" (click)="volver()">Volver</button>
+      </div>
+    </div>
+
+    <ng-template #sinProducto>
+      <div class="alert alert-warning">Producto no encontrado.</div>
+      <button class="btn btn-secondary" (click)="volver()">Volver</button>
+    </ng-template>
+  </div>
+</section>
