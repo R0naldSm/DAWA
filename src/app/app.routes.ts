@@ -23,6 +23,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
   },
   {
+    path: 'pedido/editar/:id',
+    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
+  },
+  {
     path: 'pagos',
     loadComponent: () => import('./pagos/pagos')
   },

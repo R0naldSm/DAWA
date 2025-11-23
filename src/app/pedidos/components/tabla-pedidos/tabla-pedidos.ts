@@ -6,10 +6,11 @@ import { ProveedorService } from '../../../services/proveedorService';
 import { PedidoService } from '../../../services/pedidoService';
 import { TablaDetallePedidos } from "../tabla-detalle-pedidos/tabla-detalle-pedidos";
 import { InfoPedido } from "../info-pedido/info-pedido";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'app-tabla-pedidos',
-  imports: [ InfoPedido],
+  imports: [InfoPedido, RouterLink],
   templateUrl: './tabla-pedidos.html',
   styleUrl: './tabla-pedidos.css',
 })
