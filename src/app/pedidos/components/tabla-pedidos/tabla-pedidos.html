@@ -15,19 +15,50 @@
   <tbody>
     @for (pedido of pedidos(); track pedido.id_pedido) {
       <tr>
-        <td scope="row">{{pedido.id_pedido}}</td>
-        <td>{{pedido.nombre_proveedor}}</td>
-        <td>{{pedido.fecha_creacion_pedido}}</td>
-        <td>{{pedido.fecha_estimada_entrega}}</td>
-        <td>{{pedido.estado}}</td>
+        <td class="text-center">{{pedido.id_pedido}}</td>
+        <td class="text-center">{{pedido.nombre_proveedor}}</td>
+        <td class="text-center">{{pedido.fecha_creacion_pedido}}</td>
+        <td class="text-center">{{pedido.fecha_estimada_entrega}}</td>
+        <td class="text-center"> <!--Estados del pedido-->
+          @if(pedido.estado == 'Pendiente'){
+            <span class="fw-semibold text-warning bg-warning-subtle py-1 px-2 rounded-4">
+              {{pedido.estado}}
+            </span>
+          }@else if(pedido.estado == 'Cancelado') {
+            <span class="fw-semibold text-danger bg-danger-subtle py-1 px-2 rounded-4">
+              {{pedido.estado}}
+            </span>
+          }@else if(pedido.estado == 'En proceso') {
+            <span class="fw-semibold text-primary bg-primary-subtle py-1 px-2 rounded-4">
+              {{pedido.estado}}
+            </span>
+          }@else if(pedido.estado == 'Entregado'){
+            <span class="fw-semibold text-success bg-success-subtle py-1 px-2 rounded-4">
+              {{pedido.estado}}
+            </span>
+          }
+        </td>
         <td>$ {{pedido.total}}</td>
-        <td class="d-flex gap-2">
-          <button class="btn btn-success" (click)="enviar()">Enviar pedido</button>
-          <button class="btn btn-outline-primary" 
+        <td class="d-flex gap-2"> <!--Botones de acciones-->
+          <button class="btn btn-outline-success" 
                   data-bs-toggle="modal"
                   data-bs-target="#staticBackdrop"
                   (click)="seleccionarPedido(pedido)">Ver información</button>
-          <button class="btn text-danger" (click)="cancelar(pedido.id_pedido)">Cancelar</button>
+          <div class="dropdown">
+            @if(pedido.estado != 'Entregado'){
+              <button class="btn btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                @if(pedido.estado == 'Pendiente' || pedido.estado == 'Cancelado') {
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="enviar()">Enviar</a></li>
+                }
+                @if(pedido.estado == 'En proceso') {
+                  <li><a class="dropdown-item" style="cursor: pointer;">Cancelar</a></li>
+                }
+              </ul>
+            }
+          </div>
         </td>
       </tr>
     }

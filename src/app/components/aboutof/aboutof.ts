@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import Footer from '../footer/footer';
 
 @Component({
   selector: 'app-aboutof',
-  imports: [],
+  imports: [Footer],
   templateUrl: './aboutof.html',
   styleUrl: './aboutof.css',
 })
