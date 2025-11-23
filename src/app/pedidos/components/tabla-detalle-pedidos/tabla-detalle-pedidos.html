@@ -11,11 +11,11 @@
 
   <tbody>
     @for (producto of detallePedido(); track producto.idDetalle) {
-      <tr>
-        <td scope="row">{{producto.producto}}</td>
+      <tr class="text-center">
+        <td>{{producto.producto}}</td>
         <td>{{producto.cantidad}}</td>
         <td>{{producto.precioUnitario}}</td>
-        <td>{{producto.total}}</td>
+        <td class="fw-semibold">${{producto.total}}</td>
       </tr>
     }
   </tbody>

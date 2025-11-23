@@ -1,33 +1,90 @@
-<!--cabezera-->
-      <div class="d-flex px-3 pt-3">
-        <h2 class="modal-title fs-5 fw-bold" id="staticBackdropLabel">{{infoProveedor()?.nombreEmpresa}}</h2>
-        <button class="ms-auto btn btn-primary">Editar</button>
+  <div class="bg-body-tertiary border-bottom border-1"> <!--cabezera-->
+    <div class="d-flex px-3 pt-3 justify-content-center">
+        <h2 class="modal-title fs-5 fw-bold text-success" id="staticBackdropLabel">{{infoProveedor()?.nombreEmpresa}}</h2>
+        <div class="ms-auto"> <!--Estado del pedido-->
+          @if(pedidoSeleccionado()?.estado == 'Pendiente'){
+            <span class="fw-semibold text-warning bg-warning-subtle py-1 px-2 rounded-4">
+              {{pedidoSeleccionado()?.estado}}
+            </span>
+          }@else if(pedidoSeleccionado()?.estado == 'Cancelado') {
+            <span class="fw-semibold text-danger bg-danger-subtle py-1 px-2 rounded-4">
+              {{pedidoSeleccionado()?.estado}}
+            </span>
+          }@else if(pedidoSeleccionado()?.estado == 'En proceso') {
+            <span class="fw-semibold text-primary bg-primary-subtle py-1 px-2 rounded-4">
+              {{pedidoSeleccionado()?.estado}}
+            </span>
+          }@else if(pedidoSeleccionado()?.estado == 'Entregado'){
+            <span class="fw-semibold text-success bg-success-subtle py-1 px-2 rounded-4">
+              {{pedidoSeleccionado()?.estado}}
+            </span>
+          }
+        </div>
       </div>
-      <p class="ps-3 fs-6">RUC: {{infoProveedor()?.ruc}}</p>
-      <!--cuerpo (informacion del proveedor)-->
-      <span class="ps-3 fs-6 fw-bold">Datos del proveedor</span>
-      <hr class="mx-3 mt-0">
-      <div class="ps-3">
-        <p><span class="fw-semibold">Persona de contacto:</span> {{infoProveedor()?.personaContacto}}</p>
-        <p><span class="fw-semibold">Teléfono:</span> {{infoProveedor()?.telefono}}</p>
-        <p><span class="fw-semibold">correo electrónico:</span> {{infoProveedor()?.correo}}</p>
+      <p class="ps-3 small">RUC: {{infoProveedor()?.ruc}}</p>
+  </div>
+  
+  <div class="p-4 pb-2"> <!--cuerpo (informacion del proveedor)-->
+    <span class="fw-semibold text-secondary" style="letter-spacing: 1px;">DATOS DEL PROVEEDOR</span>
+    <div class="mt-4 row">
+
+      <div class="d-flex col">
+        <i class="bi bi-person-fill fs-2 pe-2 text-success"></i>
+        <div>
+          <span class="small text-secondary">Persona de contacto</span>
+          <p>{{infoProveedor()?.personaContacto}}</p>
+        </div>
       </div>
 
-      <!--cuerpo (informacion de pedido)-->
-      <span class="ps-3 fs-6 fw-bold">Detalles del pedido</span>
-      <hr class="mx-3 mt-0">
-      <div class="ps-3">
-        <p><span class="fw-semibold">ID del pedido:</span> {{pedidoSeleccionado()?.id_pedido}}</p>
-        <p><span class="fw-semibold">Fecha de pedido:</span> {{pedidoSeleccionado()?.fecha_creacion_pedido}}</p>
-        <p><span class="fw-semibold">Fecha estimada de entrega:</span> {{pedidoSeleccionado()?.fecha_estimada_entrega}}</p>
+      <div class="d-flex col">
+        <i class="bi bi-telephone-fill fs-2 pe-2 text-success"></i>
+        <div>
+          <span class="small text-secondary">Teléfono</span>
+          <p>{{infoProveedor()?.telefono}}</p>
+        </div>
       </div>
 
-      <!--cuerpo (productos del pedido)-->
-      <span class="ps-3 fs-6 fw-bold">Productos del pedido</span>
-      <app-tabla-detalle-pedidos class="mx-2" [detallePedido]="productosPedidos()"/>
-      <p class="fs-2"><span class="fw-bold">Total:</span> {{pedidoSeleccionado()?.total}}</p>
+      <div class="d-flex col">
+        <i class="bi bi-envelope-fill fs-2 pe-2 text-success"></i>
+        <div>
+          <span class="small text-secondary">Correo electrónico</span>
+          <p>{{infoProveedor()?.correo}}</p>
+        </div>
+      </div>
 
-      <!--Observaciones-->
-      <span class="ps-3 fs-6 fw-bold">Observaciones</span>
-      <hr class="mx-3 mt-0">
-      <p class="ps-3">{{pedidoSeleccionado()?.observaciones}}</p>
+    </div>
+  </div>
+
+  <div class="p-4"> <!--cuerpo (informacion de pedido)-->
+    <span class="fw-semibold text-secondary" style="letter-spacing: 1px;">DETALLES DEL PEDIDO</span>
+    <div class="bg-body-tertiary rounded rounded-3 row p-2 mt-4">
+
+      <div class="col">
+        <span class="small text-secondary">ID del pedido</span>
+        <p class="fw-semibold"># {{pedidoSeleccionado()?.id_pedido}}</p>
+      </div>
+
+      <div class="col">
+        <span class="small text-secondary">Fecha de pedido</span>
+        <p class="fw-semibold">{{pedidoSeleccionado()?.fecha_creacion_pedido}}</p>
+      </div>
+
+      <div class="col">
+        <span class="small text-secondary">Entrega estimada</span>
+        <p class="fw-semibold">{{pedidoSeleccionado()?.fecha_estimada_entrega}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4 d-flex flex-column"> <!--cuerpo (productos del pedido)-->
+    <span class="fw-semibold text-secondary mb-4" style="letter-spacing: 1px;">PRODUCTOS DEL PEDIDO</span>
+    <app-tabla-detalle-pedidos [detallePedido]="productosPedidos()"/>
+    <p class="fs-2 ms-auto text-success"><span class="fw-bold">Total:</span> ${{pedidoSeleccionado()?.total}}</p>
+  </div>
+
+  <div class="p-4"> <!--Observaciones-->
+    <span class="fw-semibold text-secondary mb-4" style="letter-spacing: 1px;">OBSERVACIONES</span>
+    <div class="bg-warning-subtle border-start border-3 border-warning p-2 mt-4">
+      <p class="small">{{pedidoSeleccionado()?.observaciones}}</p>
+    </div>
+  </div>
