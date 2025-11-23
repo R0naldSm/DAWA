@@ -50,11 +50,14 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </button>
               <ul class="dropdown-menu">
-                @if(pedido.estado == 'Pendiente' || pedido.estado == 'Cancelado') {
+                @if(pedido.estado == 'Pendiente') {
                   <li><a class="dropdown-item" style="cursor: pointer;" (click)="enviar()">Enviar</a></li>
                 }
                 @if(pedido.estado == 'En proceso') {
                   <li><a class="dropdown-item" style="cursor: pointer;">Cancelar</a></li>
+                }
+                @if(pedido.estado == 'Cancelado') {
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="reactivar(pedido.id_pedido)">Reactivar</a></li>
                 }
               </ul>
             }

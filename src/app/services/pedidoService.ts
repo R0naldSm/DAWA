@@ -136,9 +136,10 @@ export class PedidoService {
     );
   }
 
-  cancelarPedido(idPedido: number){
-    this.pedidos = this.pedidos.filter(
-      pedido => pedido.id_pedido !== idPedido
-    );
+  ReactivarPedido(idPedido: number){
+    const pedido = this.pedidos.find(p => p.id_pedido === idPedido);
+    if(pedido && pedido.estado === "Cancelado"){
+      pedido.estado = "Pendiente";
+    }
   }
 }

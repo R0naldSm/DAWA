@@ -30,8 +30,8 @@ export class TablaPedidos {
     this.productosPedidos = this.pedidoService.getDetallesByPedido(pedido.id_pedido)
   }
 
-  cancelar(idPedido: number){
-    this.pedidoService.cancelarPedido(idPedido)
+  reactivar(idPedido: number){
+    this.pedidoService.ReactivarPedido(idPedido)
   }
 
   enviar(){
