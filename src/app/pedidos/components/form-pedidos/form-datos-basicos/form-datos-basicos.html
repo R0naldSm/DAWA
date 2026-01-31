@@ -1,0 +1,42 @@
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Datos Básicos</h5>
+    </div>
+
+    <div class="card-body">
+        <form [formGroup]="formDatosBasicos()">
+            <div class="mb-4 row g-3">
+
+                <!-- Proveedor -->
+                <div class="col-md-6">
+                    <label for="proveedor" class="form-label">Proveedor</label>
+                    <app-selector-proveedores [listaProveedores]="proveedores"(proveedorSeleccionado)="ProveedorSeleccionado($event)"/>
+                </div>
+
+                <!-- Fecha de entrega estimada -->
+                <div class="col-md-6">
+                    <label class="form-label">Fecha de entrega estimada</label>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <input formControlName="dia" type="text" placeholder="día" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <input formControlName="mes" type="text" placeholder="mes" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <input formControlName="anio" type="text" placeholder="año" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Observaciones -->
+            <div class="mb-4">
+                <label for="observaciones" class="form-label">Observaciones</label>
+                <textarea formControlName="observaciones" class="form-control" id="observaciones" rows="4" placeholder="Ingrese observaciones adicionales"></textarea>
+            </div>
+
+        </form>
+    </div>
+</div>

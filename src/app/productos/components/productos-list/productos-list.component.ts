@@ -32,7 +32,7 @@ export default class ProductosListComponent {
         productos = this.productoService.getByProveedor(id);
       } else {
         // fallback: filter by supplier name (if available in proveedor fields)
-        productos = this.productoService.getProductos().filter(p => (p.nombre || p.nombreProducto || '').toLowerCase().includes(String(proveedor).toLowerCase()));
+        productos = this.productoService.getProductos().filter(p => (p.nombre || '').toLowerCase().includes(String(proveedor).toLowerCase()));
       }
     }
 
@@ -49,7 +49,7 @@ export default class ProductosListComponent {
     } else {
       const id = Number(proveedor);
       if (!isNaN(id) && id > 0) productos = this.productoService.getByProveedor(id);
-      else productos = this.productoService.getProductos().filter(p => (p.nombre || p.nombreProducto || '').toLowerCase().includes(String(proveedor).toLowerCase()));
+      else productos = this.productoService.getProductos().filter(p => (p.nombre || '').toLowerCase().includes(String(proveedor).toLowerCase()));
     }
     return productos;
   }
@@ -60,7 +60,7 @@ export default class ProductosListComponent {
     if (proveedor === '') productos = this.productoService.getProductos();
     else {
       const id = Number(proveedor);
-      productos = (!isNaN(id) && id > 0) ? this.productoService.getByProveedor(id) : this.productoService.getProductos().filter(p => (p.nombre || p.nombreProducto || '').toLowerCase().includes(String(proveedor).toLowerCase()));
+      productos = (!isNaN(id) && id > 0) ? this.productoService.getByProveedor(id) : this.productoService.getProductos().filter(p => (p.nombre || '').toLowerCase().includes(String(proveedor).toLowerCase()));
     }
     return Math.max(1, Math.ceil(productos.length / 10));
   }

@@ -1,0 +1,17 @@
+<div class="position-relative">
+  <form [formGroup]="formSelectorProveedor">
+    <input formControlName="nombreProveedor" type="text" class="form-control" placeholder="Buscar..." #valor
+    (focus)="visibleLista = true" 
+    (blur)="visibleLista = false"/>
+  </form>
+
+  @if(visibleLista){
+    <div class="card shadow-sm overflow-y-scroll position-absolute w-100 z-1" style="max-height: 300px;">
+      @for(proveedor of datosFiltrados(); track proveedor.id){
+        <button class="p-2 btn btn-light" (mousedown)="datoSeleccionado(proveedor)">
+          {{proveedor.nombreEmpresa}}
+        </button>
+      }
+    </div>
+  }
+</div>

@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Producto } from '../interfaces/productos';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,7 @@ export class ProductoService {
   private productos: Producto[] = [
     {
       id_proveedor: 1,
-      nombreProducto: "Laptop HP ProBook 450",
+      nombre: "Laptop HP ProBook 450",
       descripcion: "Laptop empresarial con procesador Intel i5 y 16GB RAM",
       unidadMedida: "unidad",
       precio: 950.00,
@@ -16,7 +18,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 2,
-      nombreProducto: "Fertilizante Orgánico AndesGrow",
+      nombre: "Fertilizante Orgánico AndesGrow",
       descripcion: "Fertilizante natural para cultivos de hortalizas y frutas",
       unidadMedida: "saco (50kg)",
       precio: 28.50,
@@ -24,7 +26,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 3,
-      nombreProducto: "Cemento Portland 50kg",
+      nombre: "Cemento Portland 50kg",
       descripcion: "Cemento de alta resistencia para construcción general",
       unidadMedida: "saco",
       precio: 9.75,
@@ -32,7 +34,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 4,
-      nombreProducto: "Aceite de Girasol El Oro",
+      nombre: "Aceite de Girasol El Oro",
       descripcion: "Aceite vegetal 100% natural, ideal para cocinar",
       unidadMedida: "litro",
       precio: 3.20,
@@ -40,7 +42,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 5,
-      nombreProducto: "Guantes de Latex Médicos",
+      nombre: "Guantes de Latex Médicos",
       descripcion: "Guantes desechables para uso médico y laboratorio",
       unidadMedida: "caja (100 unidades)",
       precio: 12.90,
@@ -48,7 +50,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 6,
-      nombreProducto: "Foco LED 15W",
+      nombre: "Foco LED 15W",
       descripcion: "Foco de bajo consumo, luz blanca fría 6500K",
       unidadMedida: "unidad",
       precio: 2.80,
@@ -56,7 +58,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 7,
-      nombreProducto: "Cartucho de Tinta HP 662",
+      nombre: "Cartucho de Tinta HP 662",
       descripcion: "Cartucho negro compatible con impresoras HP DeskJet",
       unidadMedida: "unidad",
       precio: 17.40,
@@ -64,7 +66,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 8,
-      nombreProducto: "Agua Mineral 500ml",
+      nombre: "Agua Mineral 500ml",
       descripcion: "Agua purificada de manantial andino",
       unidadMedida: "botella",
       precio: 0.75,
@@ -72,7 +74,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 9,
-      nombreProducto: "Lubricante Automotriz 20W50",
+      nombre: "Lubricante Automotriz 20W50",
       descripcion: "Aceite de motor multigrado para vehículos a gasolina",
       unidadMedida: "galón",
       precio: 22.00,
@@ -80,7 +82,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 10,
-      nombreProducto: "Camiseta de Algodón Eco",
+      nombre: "Camiseta de Algodón Eco",
       descripcion: "Camiseta ecológica elaborada con algodón reciclado",
       unidadMedida: "unidad",
       precio: 8.50,
@@ -88,7 +90,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 11,
-      nombreProducto: "Cereal Natural Mix 500g",
+      nombre: "Cereal Natural Mix 500g",
       descripcion: "Cereal con avena, pasas y frutos secos sin azúcar",
       unidadMedida: "paquete",
       precio: 4.30,
@@ -96,7 +98,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 12,
-      nombreProducto: "Martillo de Acero 16oz",
+      nombre: "Martillo de Acero 16oz",
       descripcion: "Martillo de uso general con mango de goma",
       unidadMedida: "unidad",
       precio: 6.90,
@@ -104,7 +106,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 13,
-      nombreProducto: "Router Wi-Fi D-Link N300",
+      nombre: "Router Wi-Fi D-Link N300",
       descripcion: "Router inalámbrico con velocidad de hasta 300 Mbps",
       unidadMedida: "unidad",
       precio: 32.00,
@@ -112,7 +114,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 14,
-      nombreProducto: "Semillas de Papa SuperAndina",
+      nombre: "Semillas de Papa SuperAndina",
       descripcion: "Semillas certificadas para cultivo de papa de altura",
       unidadMedida: "saco (25kg)",
       precio: 18.20,
@@ -120,7 +122,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 15,
-      nombreProducto: "Televisor LED 43'' Full HD",
+      nombre: "Televisor LED 43'' Full HD",
       descripcion: "Televisor de alta definición con entrada HDMI y USB",
       unidadMedida: "unidad",
       precio: 379.00,
@@ -128,7 +130,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 16,
-      nombreProducto: "Caja de Mangos Orgánicos",
+      nombre: "Caja de Mangos Orgánicos",
       descripcion: "Caja de 10kg de mangos orgánicos certificados",
       unidadMedida: "caja",
       precio: 21.50,
@@ -136,7 +138,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 17,
-      nombreProducto: "Resma de Papel A4 80g",
+      nombre: "Resma de Papel A4 80g",
       descripcion: "Papel blanco de alta calidad para impresión y copiado",
       unidadMedida: "paquete (500 hojas)",
       precio: 5.25,
@@ -144,7 +146,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 18,
-      nombreProducto: "Servicio de Transporte Logístico",
+      nombre: "Servicio de Transporte Logístico",
       descripcion: "Transporte de mercancías dentro del Ecuador",
       unidadMedida: "servicio",
       precio: 150.00,
@@ -152,7 +154,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 19,
-      nombreProducto: "Mouse Gamer RGB",
+      nombre: "Mouse Gamer RGB",
       descripcion: "Mouse ergonómico con iluminación RGB y 6 botones",
       unidadMedida: "unidad",
       precio: 24.99,
@@ -160,7 +162,7 @@ export class ProductoService {
     },
     {
       id_proveedor: 20,
-      nombreProducto: "Shampoo Natural BioHerbal",
+      nombre: "Shampoo Natural BioHerbal",
       descripcion: "Shampoo con extractos naturales de romero y aloe vera",
       unidadMedida: "botella (500ml)",
       precio: 6.80,
@@ -176,7 +178,7 @@ export class ProductoService {
       ...p,
       id: index + 1,
       proveedorId: p.id_proveedor,
-      nombre: p.nombreProducto,
+      nombre: p.nombre,
       disponible: p.disponibilidad,
     }));
     this.nextId = this.productos.length + 1;
@@ -190,6 +192,7 @@ export class ProductoService {
     return this.productos.filter(p => (p.id_proveedor === idProveedor) || (p.proveedorId === idProveedor));
   }
 
+
   getById(id: number): Producto | undefined {
     return this.productos.find(p => p.id === id);
   }
@@ -199,8 +202,7 @@ export class ProductoService {
       id: this.nextId++,
       id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? 0,
       proveedorId: payload.proveedorId ?? payload.id_proveedor ?? 0,
-      nombreProducto: payload.nombre ?? payload.nombreProducto ?? '',
-      nombre: payload.nombre ?? payload.nombreProducto ?? '',
+      nombre: payload.nombre ?? payload.nombre ?? '',
       descripcion: payload.descripcion ?? '',
       unidadMedida: payload.unidadMedida ?? '',
       precio: payload.precio ?? 0,
@@ -220,8 +222,7 @@ export class ProductoService {
       ...actual,
       id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? actual.id_proveedor,
       proveedorId: payload.proveedorId ?? payload.id_proveedor ?? actual.proveedorId,
-      nombreProducto: payload.nombre ?? payload.nombreProducto ?? actual.nombreProducto,
-      nombre: payload.nombre ?? payload.nombreProducto ?? actual.nombre,
+      nombre: payload.nombre ?? payload.nombre ?? actual.nombre,
       descripcion: payload.descripcion ?? actual.descripcion,
       unidadMedida: payload.unidadMedida ?? actual.unidadMedida,
       precio: payload.precio ?? actual.precio,

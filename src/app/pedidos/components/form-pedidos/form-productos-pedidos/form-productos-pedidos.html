@@ -1,0 +1,58 @@
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Información de productos</h5>
+    </div>
+
+    <div class="card-body">
+        <form [formGroup]="formProducto" class="row g-3 mb-4">
+            <div class="col-md-5">
+                <label for="producto" class="form-label">Producto</label>
+                <app-selector-productos [productos]="productos" (idProductoSeleccionado)="obtenerIdProductoSeleccionado($event)" [resetearSelector]="resetearSelectorProducto"/>
+            </div>
+
+            <div class="col-md-5">
+                <label for="cantidad" class="form-label">Cantidad</label>
+                <input formControlName="cantidad" type="number" class="form-control" id="cantidad" min="1" value="1">
+            </div>
+
+            <div class="col-md-2 d-flex">
+                <button class="btn btn-success mt-auto" (click)="agregarProducto()">Agregar Producto</button>
+            </div>
+        </form>
+
+        <!--Tabla-->
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+
+                        <tbody id="tablaProductos">
+                            @if(productosTabla.length == 0){
+                                <tr><td colspan="5" class="text-center">No hay productos agregados</td></tr>
+                            }
+                            @for(detalle of productosTabla; track detalle.id){
+                                <tr class="text-muted">
+
+                                    <td>{{detalle.nombreProducto}}</td>
+                                    <td>{{detalle.cantidad}}</td>
+                                    <td>$ {{detalle.precioUnitario}}</td>
+                                    <td>$ {{detalle.subtotal}}</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-danger btn-sm" (click)="removerProducto(detalle.id)">Eliminar</button>
+                                    </td>
+                                    
+                                </tr>
+                            }
+                        </tbody>
+            </table>
+        </div>
+
+    </div>
+

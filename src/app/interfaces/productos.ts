@@ -1,7 +1,7 @@
 export interface Producto {
   // Campos originales del dataset
   id_proveedor: number;
-  nombreProducto: string;
+  nombre: string;
   descripcion: string;
   unidadMedida: string;
   precio: number;
@@ -10,6 +10,5 @@ export interface Producto {
   // Campos opcionales para compatibilidad con componentes
   id?: number;
   proveedorId?: number;
-  nombre?: string;
   disponible?: boolean;
 }

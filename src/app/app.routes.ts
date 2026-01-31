@@ -20,11 +20,11 @@ export const routes: Routes = [
   },
   {
     path: 'pedido/crear',
-    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
+    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos')
   },
   {
     path: 'pedido/editar/:id',
-    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido')
+    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos')
   },
   {
     path: 'pagos',

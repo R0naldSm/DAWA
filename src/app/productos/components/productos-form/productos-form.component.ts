@@ -35,7 +35,7 @@ export default class ProductosFormComponent {
         if (p) {
           this.form.patchValue({
             proveedorId: p.proveedorId || p.id_proveedor || 0,
-            nombre: p.nombre || p.nombreProducto || '',
+            nombre: p.nombre || p.nombre || '',
             descripcion: p.descripcion || '',
             unidadMedida: p.unidadMedida || '',
             precio: p.precio || 0,
@@ -57,7 +57,6 @@ export default class ProductosFormComponent {
       proveedorId: Number(v.proveedorId ?? 0),
       id_proveedor: Number(v.proveedorId ?? 0),
       nombre: String(v.nombre ?? ''),
-      nombreProducto: String(v.nombre ?? ''),
       descripcion: String(v.descripcion ?? ''),
       unidadMedida: String(v.unidadMedida ?? ''),
       precio: Number(v.precio ?? 0),
