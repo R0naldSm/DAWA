@@ -10,7 +10,7 @@ import { Producto } from '../../../interfaces/productos';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './productos-form.component.html',
 })
-export default class ProductosFormComponent {
+export class ProductosForm {
   private rutaActiva = inject(ActivatedRoute);
   private router = inject(Router);
   private productoService = inject(ProductoService);

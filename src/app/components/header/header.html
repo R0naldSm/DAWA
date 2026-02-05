@@ -1,23 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 py-3">
-  <a class="navbar-brand text-success fs-4" routerLink="/">
+
+  <a class="navbar-brand text-success fs-4" style="cursor: pointer;" (click)="irAlInicio()">
     <i class="bi bi-box-seam me-2"></i>AgroDistribution
   </a>
 
   <div class="ms-auto d-flex align-items-center">
 
-    <!-- Botón Acerca de -->
     <button class="btn btn-outline-success me-3" (click)="mostrar_acerca_de()">
       Acerca de
     </button>
 
-    <!-- Si no estuviera logueado -->
     <ng-container *ngIf="!logueado">
       <button class="btn btn-success" (click)="mostrar_iniciar_sesion()">
         Iniciar Sesión
       </button>
     </ng-container>
 
-    <!-- Verificamos si loguea -->
     <ng-container *ngIf="logueado">
       <span class="me-3 fw-semibold text-success">
         👤 {{ nombreUsuario }}

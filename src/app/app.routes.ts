@@ -1,24 +1,26 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // --- TUS MÓDULOS (Login y Proveedores) ---
-  // IMPORTANTE: Usamos .then(m => m.NombreClase) porque usas 'export class'
+  // 1. RUTA RAÍZ ('') -> AHORA ES ACERCA DE
   {
     path: '',
-    loadComponent: () => import('./components/login/login').then(m => m.Login)
+    loadComponent: () => import('./components/aboutof/aboutof').then(m => m.Aboutof)
   },
+  // 2. NUEVA RUTA EXPLÍCITA PARA LOGIN
   {
-    path: 'proveedores',
-    loadComponent: () => import('./components/proveedores/proveedores').then(m => m.Proveedores)
+    path: 'login',
+    loadComponent: () => import('./components/login/login').then(m => m.Login)
   },
   {
     path: 'principal',
     loadComponent: () => import('./components/principal/principal').then(m => m.Principal)
   },
+  {
+    path: 'proveedores',
+    loadComponent: () => import('./components/proveedores/proveedores').then(m => m.Proveedores)
+  },
 
-  // --- MÓDULOS DE PEDIDOS (DIEGO) ---
-  // Descomenta uno por uno y verifica el nombre de la clase si falla (ej: m.ListaPedidos vs m.PedidosList)
-
+  // --- PEDIDOS ---
   {
     path: 'pedidos',
     redirectTo: 'pedidos/1',
@@ -36,11 +38,9 @@ export const routes: Routes = [
     loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido').then(m => m.NuevoPedido)
   },
 
-
-  // --- OTROS COMPONENTES ---
-  // Si tienes estos archivos, descoméntalos. Si no, déjalos así para que no falle.
+  // --- OTROS ---
   {
-    path: 'acerca-de',
+    path: 'acerca-de', // Por si alguien escribe manual /acerca-de
     loadComponent: () => import('./components/aboutof/aboutof').then(m => m.Aboutof)
   },
   {
@@ -54,6 +54,18 @@ export const routes: Routes = [
   {
     path: 'productos',
     loadComponent: () => import('./productos/components/productos-list/productos-list.component').then(m => m.ProductosList)
+  },
+  {
+    path: 'productos/crear',
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component').then(m => m.ProductosForm)
+  },
+  {
+    path: 'productos/:id/editar',
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component').then(m => m.ProductosForm)
+  },
+  {
+    path: 'productos/:id',
+    loadComponent: () => import('./productos/components/productos-detalle/productos-detalle.component').then(m => m.ProductosDetalle)
   },
 
   {

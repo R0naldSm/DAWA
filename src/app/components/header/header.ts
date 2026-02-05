@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './../../services/auth';
@@ -10,28 +10,36 @@ import { AuthService } from './../../services/auth';
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
-export class Header {
+export class Header implements OnInit {
 
-  logueado = false;
-  nombreUsuario = '';
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private auth: AuthService, private router: Router) {
+  logueado: boolean = false;
+  nombreUsuario: string = '';
 
-    // Observar el estado global
+  ngOnInit() {
     this.auth.logueado$.subscribe(val => this.logueado = val);
     this.auth.nombreUsuario$.subscribe(name => this.nombreUsuario = name);
   }
 
+  irAlInicio() {
+    if (this.logueado) {
+      this.router.navigate(['/principal']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
+
   mostrar_acerca_de() {
-    this.router.navigate(['/acerca-de']);
+    this.router.navigate(['/']);
   }
 
   mostrar_iniciar_sesion() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/login']);
   }
 
   cerrar_sesion() {
     this.auth.logout();
-    this.router.navigate(['/']);
   }
 }

@@ -12,7 +12,7 @@ export class AuthService {
   private router = inject(Router);
   private apiUrl = 'http://localhost:5000/api/Auth';
 
-  private usuarioActualSubject = new BehaviorSubject<Usuario | null>(this.getUserFromStorage());
+  private usuarioActualSubject = new BehaviorSubject<any>(this.getUserFromStorage());
   usuarioActual$ = this.usuarioActualSubject.asObservable();
 
   mostrarLoginModal = new BehaviorSubject<boolean>(false);
@@ -23,17 +23,25 @@ export class AuthService {
   }
 
   get nombreUsuario$(): Observable<string> {
-    return this.usuarioActual$.pipe(map(u => u ? u.Nombres : ''));
+    return this.usuarioActual$.pipe(map(u => {
+      if (!u) return '';
+      return u.Nombres || u.nombres || u.Nombre_Usuario || 'Usuario';
+    }));
   }
 
   login(usuario: string, clave: string): Observable<any> {
     const body: any = { Nombre_Usuario: usuario, Clave: clave, Transaccion: 'LOGIN' };
+
     return this.http.post(`${this.apiUrl}/ValidarUsuario`, body).pipe(
       tap((res: any) => {
         if (res && res.token) {
           localStorage.setItem('token', res.token);
-          localStorage.setItem('user', JSON.stringify(res.usuario));
-          this.usuarioActualSubject.next(res.usuario);
+
+          const userObj = res.usuario;
+          localStorage.setItem('user', JSON.stringify(userObj));
+
+          this.usuarioActualSubject.next(userObj);
+
           this.cerrarLogin();
         }
       })
@@ -58,7 +66,7 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
-  private getUserFromStorage(): Usuario | null {
+  private getUserFromStorage() {
     try {
       const user = localStorage.getItem('user');
       return user ? JSON.parse(user) : null;
