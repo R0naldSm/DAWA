@@ -9,4 +9,4 @@ import { RouterLink } from "@angular/router";
   templateUrl: './principal.html',
   styleUrls: ['./principal.css'],
 })
-export default class Principal {}
+export class Principal {}

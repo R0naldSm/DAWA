@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './productos-list.component.html',
 })
-export default class ProductosListComponent {
+export class ProductosList {
   private productoService = inject(ProductoService);
   private formBuilder = inject(NonNullableFormBuilder);
   private router = inject(Router);

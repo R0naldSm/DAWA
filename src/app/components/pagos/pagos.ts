@@ -19,12 +19,12 @@ interface Pago {
   templateUrl: './pagos.html',
   styleUrls: ['./pagos.css']
 })
-export default class PagosComponent implements OnInit {
+export class Pagos implements OnInit {
   pagos: Pago[] = [];
   pagosFiltrados: Pago[] = [];
   filtroEstado: string = 'Todos';
   busqueda: string = '';
-  
+
   // Datos para nuevo pago
   nuevoPago: Pago = {
     id: 0,
@@ -35,7 +35,7 @@ export default class PagosComponent implements OnInit {
     concepto: '',
     metodoPago: ''
   };
-  
+
   mostrarModal: boolean = false;
 
   ngOnInit() {

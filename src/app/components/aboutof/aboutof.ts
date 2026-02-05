@@ -7,6 +7,6 @@ import Footer from '../footer/footer';
   templateUrl: './aboutof.html',
   styleUrl: './aboutof.css',
 })
-export default class Aboutof {
+export class Aboutof {
 
 }

@@ -30,12 +30,12 @@ interface Producto {
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export default class DashboardComponent implements OnInit {
+export class Dashboard implements OnInit {
   estadisticas: Estadistica[] = [];
   pedidosRecientes: Pedido[] = [];
   productosPopulares: Producto[] = [];
   ventasMensuales: any[] = [];
-  
+
   ngOnInit() {
     this.cargarEstadisticas();
     this.cargarPedidosRecientes();

@@ -1,33 +1,108 @@
-<div class="d-flex justify-content-center align-items-center" style="height: 75vh;">
-  <div class="card shadow-lg p-4 border-0" style="width: 380px;">
-    <h4 class="text-center mb-4 text-success fw-bold">
-      <i class="bi bi-person-circle me-2"></i>Inicio de Sesión
-    </h4>
+<div class="login-container">
+  <div class="card shadow-lg border-0 login-card animate__animated animate__fadeIn">
 
-    <div class="mb-3">
-      <label for="usuario" class="form-label text-secondary">Usuario</label>
-      <input
-        type="text"
-        id="usuario"
-        class="form-control"
-        [(ngModel)]="usuario"
-        placeholder="Ingrese su usuario">
-    </div>
-
-    <div class="mb-3">
-      <label for="clave" class="form-label text-secondary">Clave</label>
-      <input
-        type="password"
-        id="clave"
-        class="form-control"
-        [(ngModel)]="clave"
-        placeholder="Ingrese su clave">
-    </div>
-
-    <button class="btn btn-success w-100 mt-2" (click)="login()">
-      Aceptar
+    <button class="btn-close-modal" (click)="cerrar()">
+      <i class="bi bi-x-lg"></i>
     </button>
+
+    <div *ngIf="vistaActual === 'login'">
+      <h4 class="text-center mb-4 text-success fw-bold">
+        <i class="bi bi-person-circle me-2"></i>Inicio de Sesión
+      </h4>
+      <div class="mb-3">
+        <label class="form-label text-secondary fw-semibold">Usuario</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-success"><i class="bi bi-person"></i></span>
+          <input type="text" class="form-control border-start-0" [(ngModel)]="loginData.usuario" placeholder="admin / operador">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label text-secondary fw-semibold">Clave</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0 text-success"><i class="bi bi-key"></i></span>
+          <input type="password" class="form-control border-start-0" [(ngModel)]="loginData.clave" placeholder="••••••">
+        </div>
+      </div>
+      <button class="btn btn-agro w-100 mt-2 py-2 fw-bold shadow-sm" (click)="procesarLogin()">INGRESAR</button>
+      <div class="d-flex justify-content-between mt-3 text-sm">
+        <a href="javascript:void(0)" class="text-secondary text-decoration-none small" (click)="cambiarVista('recuperar')">Recuperar Clave</a>
+        <a href="javascript:void(0)" class="text-success fw-bold text-decoration-none small" (click)="cambiarVista('registro')">Registrar Personal</a>
+      </div>
+    </div>
+
+    <div *ngIf="vistaActual === 'registro'">
+      <h4 class="text-center mb-3 text-success fw-bold"><i class="bi bi-person-badge me-2"></i>Nuevo Personal</h4>
+      <div class="mb-2">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="registroData.nombres" placeholder="Nombre Completo">
+      </div>
+      <div class="mb-2">
+        <input type="text" class="form-control form-control-sm" [(ngModel)]="registroData.usuario" placeholder="Usuario">
+      </div>
+      <div class="mb-2">
+        <select class="form-select form-select-sm text-secondary" [(ngModel)]="registroData.rol">
+          <option value="ADMIN">Rol: Administrador</option>
+          <option value="OPERADOR">Rol: Operador</option>
+        </select>
+      </div>
+      <div class="mb-2">
+        <input type="password" class="form-control form-control-sm" [(ngModel)]="registroData.clave" placeholder="Contraseña">
+      </div>
+      <div class="mb-3">
+        <input type="password" class="form-control form-control-sm" [(ngModel)]="confirmarClave" placeholder="Confirmar Contraseña">
+      </div>
+      <button class="btn btn-agro w-100 py-2 fw-bold shadow-sm" (click)="procesarRegistro()">REGISTRAR</button>
+      <div class="text-center mt-3">
+        <a href="javascript:void(0)" class="text-secondary text-decoration-none small" (click)="cambiarVista('login')"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+      </div>
+    </div>
+
+    <div *ngIf="vistaActual === 'recuperar'">
+      <h4 class="text-center mb-4 text-warning fw-bold">
+        <i class="bi bi-shield-lock me-2"></i>Restablecer Clave
+      </h4>
+
+      <div *ngIf="pasoRecuperacion === 1" class="animate__animated animate__fadeIn">
+        <p class="text-muted small text-center mb-4">Ingrese su nombre de usuario para buscar su cuenta.</p>
+
+        <div class="mb-4">
+          <label class="form-label text-secondary fw-semibold">Usuario</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-warning"><i class="bi bi-person-bounding-box"></i></span>
+            <input type="text" class="form-control border-start-0" [(ngModel)]="usuarioRecuperar" placeholder="Ej: admin">
+          </div>
+        </div>
+
+        <button class="btn btn-warning text-white w-100 py-2 fw-bold shadow-sm" (click)="verificarUsuarioExiste()">
+          BUSCAR USUARIO
+        </button>
+      </div>
+
+      <div *ngIf="pasoRecuperacion === 2" class="animate__animated animate__fadeInRight">
+        <div class="alert alert-success py-2 small text-center">
+          <i class="bi bi-check-circle-fill me-1"></i> Usuario <strong>{{usuarioRecuperar}}</strong> encontrado.
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label small fw-bold text-secondary">Nueva Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="nuevaClave" placeholder="Mín 6 caracteres">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label small fw-bold text-secondary">Confirmar Contraseña</label>
+          <input type="password" class="form-control" [(ngModel)]="confirmarNuevaClave" placeholder="Repita la contraseña">
+        </div>
+
+        <button class="btn btn-success w-100 py-2 fw-bold shadow-sm" (click)="guardarNuevaClave()">
+          GUARDAR CAMBIOS
+        </button>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="javascript:void(0)" class="text-secondary text-decoration-none small" (click)="cambiarVista('login')">
+          Cancelar
+        </a>
+      </div>
+    </div>
+
   </div>
 </div>
-
-<app-footer/>

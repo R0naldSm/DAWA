@@ -1,46 +1,105 @@
-import { AuthService } from './../../services/auth';
-import { Component } from '@angular/core';
+import { AuthService} from './../../services/auth';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import Footer from '../footer/footer';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule,Footer],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
-export default class Login {
+export class Login {
 
-  usuario: string = '';
-  clave: string = '';
+  private auth = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(private auth: AuthService, private router: Router) {}
+  // Variables de Control Visual
+  vistaActual: string = 'login';
 
-  login() {
-    alert('Se procederá a validar las credenciales de acceso');
+  // Datos del Formulario
+  loginData = { usuario: '', clave: '' };
 
-    if (!this.usuario || !this.clave) {
-      alert('Por favor, complete todos los campos.');
+  // Datos de Registro
+  confirmarClave: string = '';
+  registroData = { nombres: '', usuario: '', clave: '', rol: 'OPERADOR' };
+
+  // Variables de Recuperación (Las que faltaban)
+  pasoRecuperacion: number = 1;
+  usuarioRecuperar: string = '';
+  nuevaClave: string = '';
+  confirmarNuevaClave: string = '';
+
+  // --- LÓGICA DE CONEXIÓN ---
+
+  procesarLogin() {
+    if (!this.loginData.usuario || !this.loginData.clave) {
+      alert('Por favor complete los campos.');
       return;
     }
 
-    if (this.clave.length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres.');
+    // Llamada real al Docker
+    this.auth.login(this.loginData.usuario, this.loginData.clave).subscribe({
+      next: (res) => {
+        alert(`¡Bienvenido al Sistema!`);
+        this.router.navigate(['/principal']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error: Usuario o contraseña incorrectos.');
+      }
+    });
+  }
+
+  procesarRegistro() {
+    if (this.registroData.clave !== this.confirmarClave) {
+      alert('Las contraseñas no coinciden');
       return;
     }
 
-    const acceso = this.auth.login(this.usuario.trim(), this.clave);
+    this.auth.registrar(this.registroData).subscribe({
+      next: (res) => {
+        alert('Usuario registrado correctamente. Inicie sesión.');
+        this.cambiarVista('login');
+      },
+      error: (err) => {
+        console.error(err);
+        // El backend devuelve error en el body a veces
+        const mensaje = err.error?.error || 'Error al procesar el registro.';
+        alert(mensaje);
+      }
+    });
+  }
 
-    if (acceso) {
-      alert('¡Inicio de sesión exitoso!');
+  // --- LÓGICA VISUAL (Sin cambios, solo para que funcione el HTML) ---
 
-      // Redirigir a la página principal
-      this.router.navigate(['/principal']);
-    } else {
-      alert('Credenciales incorrectas. Inténtelo de nuevo.');
+  verificarUsuarioExiste() {
+    if(!this.usuarioRecuperar) return;
+    // Simulado
+    this.pasoRecuperacion = 2;
+  }
+
+  guardarNuevaClave() {
+    if (this.nuevaClave !== this.confirmarNuevaClave) {
+      alert('Las claves no coinciden');
+      return;
     }
+    alert('Clave actualizada (Simulación)');
+    this.cambiarVista('login');
+  }
+
+  cambiarVista(vista: string) {
+    this.vistaActual = vista;
+    this.pasoRecuperacion = 1;
+    // Limpieza
+    this.usuarioRecuperar = '';
+    this.nuevaClave = '';
+  }
+
+  cerrar() {
+    this.auth.cerrarLogin();
+    this.vistaActual = 'login';
   }
 }

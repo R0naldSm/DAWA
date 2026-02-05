@@ -1,54 +1,74 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { Usuario } from '../interfaces/usuario';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private apiUrl = 'http://localhost:5000/api/Auth';
 
-  // Usuario válido para la actividad
-  public usuarioValido = {
-    usuario: 'admin',
-    clave: 'admin123',
-    nombre: 'Administrador del Sistema'
-  };
+  private usuarioActualSubject = new BehaviorSubject<Usuario | null>(this.getUserFromStorage());
+  usuarioActual$ = this.usuarioActualSubject.asObservable();
 
-  // Estado global de login (persistido en localStorage)
-  private logueadoSource = new BehaviorSubject<boolean>(localStorage.getItem('logueado') === 'true');
-  logueado$ = this.logueadoSource.asObservable();
+  mostrarLoginModal = new BehaviorSubject<boolean>(false);
+  mostrarLoginModal$ = this.mostrarLoginModal.asObservable();
 
-  private nombreSource = new BehaviorSubject<string>(localStorage.getItem('nombreUsuario') || '');
-  nombreUsuario$ = this.nombreSource.asObservable();
-
-  // Método para validar credenciales
-  login(usuario: string, clave: string): boolean {
-    if (usuario === this.usuarioValido.usuario && clave === this.usuarioValido.clave) {
-      this.logueadoSource.next(true);
-      this.nombreSource.next(this.usuarioValido.nombre);
-
-      // Persistir en localStorage para mantener la sesión al recargar
-      try {
-        localStorage.setItem('logueado', 'true');
-        localStorage.setItem('nombreUsuario', this.usuarioValido.nombre);
-      } catch (e) {
-        // Si no es posible (p. ej. modo privado), continuar sin persistencia
-        console.warn('No se pudo persistir estado de login en localStorage', e);
-      }
-      return true;
-    }
-    return false;
+  get logueado$(): Observable<boolean> {
+    return this.usuarioActual$.pipe(map(u => !!u));
   }
 
-  // Cerrar sesión
+  get nombreUsuario$(): Observable<string> {
+    return this.usuarioActual$.pipe(map(u => u ? u.Nombres : ''));
+  }
+
+  login(usuario: string, clave: string): Observable<any> {
+    const body: any = { Nombre_Usuario: usuario, Clave: clave, Transaccion: 'LOGIN' };
+    return this.http.post(`${this.apiUrl}/ValidarUsuario`, body).pipe(
+      tap((res: any) => {
+        if (res && res.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.usuario));
+          this.usuarioActualSubject.next(res.usuario);
+          this.cerrarLogin();
+        }
+      })
+    );
+  }
+
+  registrar(datos: any): Observable<any> {
+    const body: Usuario = {
+      Nombres: datos.nombres,
+      Nombre_Usuario: datos.usuario,
+      Clave: datos.clave,
+      Rol: datos.rol,
+      Transaccion: 'REGISTRAR'
+    };
+    return this.http.post(`${this.apiUrl}/RegistrarUsuario`, body);
+  }
+
   logout() {
-    this.logueadoSource.next(false);
-    this.nombreSource.next('');
-
-    try {
-      localStorage.removeItem('logueado');
-      localStorage.removeItem('nombreUsuario');
-    } catch (e) {
-      console.warn('No se pudo limpiar localStorage durante logout', e);
-    }
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.usuarioActualSubject.next(null);
+    this.router.navigate(['/']);
   }
+
+  private getUserFromStorage(): Usuario | null {
+    try {
+      const user = localStorage.getItem('user');
+      return user ? JSON.parse(user) : null;
+    } catch { return null; }
+  }
+
+  getToken() { return localStorage.getItem('token'); }
+  abrirLogin() { this.mostrarLoginModal.next(true); }
+  cerrarLogin() { this.mostrarLoginModal.next(false); }
+
+  existeUsuario(u: string): boolean { return true; }
+  actualizarClave(u: string, c: string): boolean { return true; }
 }
