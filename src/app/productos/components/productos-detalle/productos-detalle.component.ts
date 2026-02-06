@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './productos-detalle.component.html',
 })
-export default class ProductosDetalleComponent {
+export class ProductosDetalle {
   private ruta = inject(ActivatedRoute);
   private router = inject(Router);
   private productoService = inject(ProductoService);

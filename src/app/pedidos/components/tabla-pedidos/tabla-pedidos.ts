@@ -4,7 +4,6 @@ import { Proveedor } from '../../../interfaces/proveedor';
 import { DetallePedido } from '../../../interfaces/detallePedido';
 import { ProveedorService } from '../../../services/proveedorService';
 import { PedidoService } from '../../../services/pedidoService';
-import { TablaDetallePedidos } from "../tabla-detalle-pedidos/tabla-detalle-pedidos";
 import { InfoPedido } from "../info-pedido/info-pedido";
 import { RouterLink } from "@angular/router";
 
@@ -15,27 +14,43 @@ import { RouterLink } from "@angular/router";
   styleUrl: './tabla-pedidos.css',
 })
 export class TablaPedidos {
-  pedidos = input.required<Pedido[]>()
-  proveedorService = inject(ProveedorService)
-  pedidoService = inject(PedidoService)
+  pedidos = input.required<Pedido[]>();
 
-  //info del pedido seleccionado
+  proveedorService = inject(ProveedorService);
+  pedidoService = inject(PedidoService);
+
   pedidoSeleccionado: Pedido | null = null;
   infoProveedor: Proveedor | null | undefined = null;
   productosPedidos: DetallePedido[] = [];
 
-
   seleccionarPedido(pedido: Pedido) {
     this.pedidoSeleccionado = pedido;
-    this.infoProveedor = this.proveedorService.getProveedorByNombre(pedido.nombre_proveedor)
-    this.productosPedidos = this.pedidoService.getDetallesByPedido(pedido.id_pedido)
+
+    this.proveedorService.getProveedorByNombre(pedido.nombre_proveedor).subscribe({
+      next: (provs) => {
+        this.infoProveedor = provs.length > 0 ? provs[0] : null;
+      },
+      error: (e) => console.error(e)
+    });
+
+    this.pedidoService.getDetallesByPedido(pedido.id_pedido).subscribe({
+      next: (detalles) => {
+        this.productosPedidos = detalles;
+      },
+      error: (e) => console.error('Error cargando detalles', e)
+    });
   }
 
   reactivar(idPedido: number){
-    this.pedidoService.ReactivarPedido(idPedido)
+    this.pedidoService.ReactivarPedido(idPedido).subscribe({
+      next: () => {
+        alert("Pedido reactivado correctamente");
+      },
+      error: (e) => alert("Error al reactivar")
+    });
   }
 
   enviar(){
-    alert("Pedido enviado")
+    alert("Pedido enviado");
   }
 }

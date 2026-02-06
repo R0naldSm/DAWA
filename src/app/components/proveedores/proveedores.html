@@ -1,44 +1,116 @@
-<div class="container mt-5">
-
-  <p class="text-secondary">
-  Bienvenido, <strong>{{ nombreUsuario }}</strong>
-  </p>
-
-  <h2 class="text-success fw-bold mb-4">
-    <i class="bi bi-people-fill me-2"></i>
-    Gestión de Proveedores
-  </h2>
+<div class="container mt-5 pt-5 animate__animated animate__fadeIn">
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <input type="text" class="form-control w-50" placeholder="Buscar proveedor..."
-    [(ngModel)]="buscarTexto"
-    >
+    <div>
+      <button class="btn btn-outline-secondary btn-sm mb-2" (click)="volver()">
+        <i class="bi bi-arrow-left"></i> Volver al Panel
+      </button>
+      <h2 class="text-success fw-bold mb-0">
+        <i class="bi bi-people-fill me-2"></i>Gestión de Proveedores
+      </h2>
+      <p class="text-muted small mt-1">
+        Bienvenido, <strong>{{ nombreUsuario }}</strong>
+      </p>
+    </div>
 
-    <button class="btn btn-success">
-      <i class="bi bi-person-plus-fill me-1"></i> Agregar Proveedor
+    <button class="btn btn-success shadow-sm" (click)="abrirModalCrear()">
+      <i class="bi bi-plus-lg me-1"></i> Nuevo Proveedor
     </button>
   </div>
 
-  <div class="card shadow-sm">
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-body p-2">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-0 text-secondary">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control border-0"
+               placeholder="Buscar por nombre o RUC..."
+               [(ngModel)]="buscarTexto">
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 overflow-hidden">
     <div class="table-responsive">
-      <table class="table table-hover mb-0">
-        <thead class="table-success">
+      <table class="table table-hover mb-0 align-middle">
+        <thead class="bg-light">
           <tr>
-            <th>Nombre</th>
-            <th>RUC</th>
-            <th>Teléfono</th>
+            <th class="ps-4 py-3 text-secondary">Proveedor</th>
+            <th class="py-3 text-secondary">Categoría</th>
+            <th class="py-3 text-secondary">RUC</th>
+            <th class="py-3 text-secondary">Teléfono / Email</th>
+            <th class="text-end pe-4 py-3 text-secondary">Acciones</th>
           </tr>
         </thead>
-
         <tbody>
           <tr *ngFor="let p of proveedoresFiltrados">
-            <td>{{ p.nombre }}</td>
-            <td>{{ p.ruc }}</td>
-            <td>{{ p.telefono }}</td>
+            <td class="ps-4 fw-bold text-dark">{{ p.nombre }}</td>
+            <td><span class="badge bg-success bg-opacity-10 text-success">{{ p.categoria }}</span></td>
+            <td><span class="badge bg-light text-dark border">{{ p.ruc }}</span></td>
+            <td class="text-muted small">
+              <div><i class="bi bi-telephone me-1"></i>{{ p.telefono }}</div>
+              <div><i class="bi bi-envelope me-1"></i>{{ p.email }}</div>
+            </td>
+            <td class="text-end pe-4">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirModalEditar(p)">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="eliminar(p.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="proveedoresFiltrados.length === 0">
+            <td colspan="5" class="text-center py-5 text-muted">
+              No se encontraron proveedores
+            </td>
           </tr>
         </tbody>
-
       </table>
+    </div>
+  </div>
+
+  <div class="modal-overlay" *ngIf="mostrarModal">
+    <div class="modal-dialog animate__animated animate__zoomIn">
+      <div class="modal-content shadow-lg">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold">
+            {{ modoEdicion ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Razón Social</label>
+            <input type="text" class="form-control" [(ngModel)]="datosFormulario.nombre">
+          </div>
+          <div class="row g-2">
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-bold">RUC</label>
+              <input type="text" class="form-control" [(ngModel)]="datosFormulario.ruc">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-bold">Categoría</label>
+              <input type="text" class="form-control" [(ngModel)]="datosFormulario.categoria">
+            </div>
+          </div>
+          <div class="row g-2">
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-bold">Teléfono</label>
+              <input type="text" class="form-control" [(ngModel)]="datosFormulario.telefono">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label small fw-bold">Email</label>
+              <input type="email" class="form-control" [(ngModel)]="datosFormulario.email">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="button" class="btn btn-success" (click)="guardarProveedor()">Guardar</button>
+        </div>
+      </div>
     </div>
   </div>
 

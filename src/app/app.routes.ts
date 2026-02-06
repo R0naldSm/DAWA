@@ -1,60 +1,75 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '',
-    loadComponent: () => import('./components/login/login')
+  // 1. RUTA RAÍZ ('') -> AHORA ES ACERCA DE
+  {
+    path: '',
+    loadComponent: () => import('./components/aboutof/aboutof').then(m => m.Aboutof)
   },
-  { path: 'acerca-de',
-    loadComponent: () => import('./components/aboutof/aboutof')
+  // 2. NUEVA RUTA EXPLÍCITA PARA LOGIN
+  {
+    path: 'login',
+    loadComponent: () => import('./components/login/login').then(m => m.Login)
   },
-  { path: 'principal',
-    loadComponent: () => import('./components/principal/principal')
+  {
+    path: 'principal',
+    loadComponent: () => import('./components/principal/principal').then(m => m.Principal)
   },
+  {
+    path: 'proveedores',
+    loadComponent: () => import('./components/proveedores/proveedores').then(m => m.Proveedores)
+  },
+
+  // --- PEDIDOS ---
   {
     path: 'pedidos',
     redirectTo: 'pedidos/1',
   },
   {
     path: 'pedidos/:pagina',
-    loadComponent: () => import('./pedidos/components/lista-pedidos/lista-pedidos')
+    loadComponent: () => import('./pedidos/components/lista-pedidos/lista-pedidos').then(m => m.ListaPedidos)
   },
   {
     path: 'pedido/crear',
-    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos')
+    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido').then(m => m.NuevoPedido)
   },
   {
     path: 'pedido/editar/:id',
-    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos')
+    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido').then(m => m.NuevoPedido)
+  },
+
+  // --- OTROS ---
+  {
+    path: 'acerca-de', // Por si alguien escribe manual /acerca-de
+    loadComponent: () => import('./components/aboutof/aboutof').then(m => m.Aboutof)
   },
   {
     path: 'pagos',
-    loadComponent: () => import('./pagos/pagos')
+    loadComponent: () => import('./components/pagos/pagos').then(m => m.Pagos)
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('./dashboard/dashboard')
-  },
-  {
-    path: 'proveedores',
-    loadComponent: () => import('./components/proveedores/proveedores')
+    loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard)
   },
   {
     path: 'productos',
-    loadComponent: () => import('./productos/components/productos-list/productos-list.component')
+    loadComponent: () => import('./productos/components/productos-list/productos-list.component').then(m => m.ProductosList)
   },
   {
     path: 'productos/crear',
-    loadComponent: () => import('./productos/components/productos-form/productos-form.component')
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component').then(m => m.ProductosForm)
   },
   {
     path: 'productos/:id/editar',
-    loadComponent: () => import('./productos/components/productos-form/productos-form.component')
+    loadComponent: () => import('./productos/components/productos-form/productos-form.component').then(m => m.ProductosForm)
   },
   {
     path: 'productos/:id',
-    loadComponent: () => import('./productos/components/productos-detalle/productos-detalle.component')
+    loadComponent: () => import('./productos/components/productos-detalle/productos-detalle.component').then(m => m.ProductosDetalle)
   },
-  { path: '**',
+
+  {
+    path: '**',
     redirectTo: ''
   }
 ];

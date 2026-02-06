@@ -1,4 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { AuthService } from './auth';
 import { Pedido } from '../interfaces/pedido';
 import { DetallePedido } from '../interfaces/detallePedido';
 
@@ -6,140 +9,70 @@ import { DetallePedido } from '../interfaces/detallePedido';
   providedIn: 'root',
 })
 export class PedidoService {
-  private pedidos: Pedido[] = [
-    {
-      id_pedido: 1,
-      nombre_proveedor: "Tech Solutions S.A.",
-      fecha_creacion_pedido: "2025-11-01",
-      fecha_estimada_entrega: "2025-11-07",
-      estado: "Entregado",
-      total: 1900.00,
-      observaciones: "Compra de equipos de oficina"
-    },
-    {
-      id_pedido: 2,
-      nombre_proveedor: "AgroAndes Cía. Ltda.",
-      fecha_creacion_pedido: "2025-11-05",
-      fecha_estimada_entrega: "2025-11-12",
-      estado: "Pendiente",
-      total: 114.00,
-      observaciones: "Fertilizantes para cultivo de pruebas"
-    },
-    {
-      id_pedido: 3,
-      nombre_proveedor: "Construec S.A.",
-      fecha_creacion_pedido: "2025-11-02",
-      fecha_estimada_entrega: "2025-11-09",
-      estado: "En proceso",
-      total: 390.00,
-      observaciones: "Materiales de construcción para almacén"
-    },
-    {
-      id_pedido: 4,
-      nombre_proveedor: "Medicorps S.A.",
-      fecha_creacion_pedido: "2025-11-08",
-      fecha_estimada_entrega: "2025-11-15",
-      estado: "Cancelado",
-      total: 38.70,
-      observaciones: "Pedido cancelado por falta de stock",
-    },
-    {
-      id_pedido: 5,
-      nombre_proveedor: "GlobalNet S.A.",
-      fecha_creacion_pedido: "2025-11-03",
-      fecha_estimada_entrega: "2025-11-10",
-      estado: "Entregado",
-      total: 96.00,
-      observaciones: "Routers para oficinas regionales",
-    },
-    {
-      id_pedido: 6,
-      nombre_proveedor: "CompuStore S.A.",
-      fecha_creacion_pedido: "2025-11-04",
-      fecha_estimada_entrega: "2025-11-11",
-      estado: "En proceso",
-      total: 74.97,
-      observaciones: "Pedido de periféricos para nuevos equipos",
-    }
-  ];
-  private detallesPedido: DetallePedido[] = [
-      // Pedido 1 – Tech Solutions S.A.
-      {
-        idDetalle: 1,
-        idPedido: 1,
-        producto: "Laptop HP ProBook 450",
-        cantidad: 2,
-        precioUnitario: 950.00,
-        total: 1900.00
-      },
-  
-      // Pedido 2 – AgroAndes
-      {
-        idDetalle: 2,
-        idPedido: 2,
-        producto: "Fertilizante Orgánico AndesGrow",
-        cantidad: 4,
-        precioUnitario: 28.50,
-        total: 114.00
-      },
-  
-      // Pedido 3 – Construec
-      {
-        idDetalle: 3,
-        idPedido: 3,
-        producto: "Cemento Portland 50kg",
-        cantidad: 40,
-        precioUnitario: 9.75,
-        total: 390.00
-      },
-  
-      // Pedido 4 – Medicorps
-      {
-        idDetalle: 4,
-        idPedido: 4,
-        producto: "Guantes de Latex Médicos",
-        cantidad: 3,
-        precioUnitario: 12.90,
-        total: 38.70
-      },
-  
-      // Pedido 5 – GlobalNet
-      {
-        idDetalle: 5,
-        idPedido: 5,
-        producto: "Router Wi-Fi D-Link N300",
-        cantidad: 3,
-        precioUnitario: 32.00,
-        total: 96.00
-      },
-  
-      // Pedido 6 – CompuStore
-      {
-        idDetalle: 6,
-        idPedido: 6,
-        producto: "Mouse Gamer RGB",
-        cantidad: 3,
-        precioUnitario: 24.99,
-        total: 74.97
-      }
-    ];
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
+  private apiUrl = 'http://localhost:5000/api/Pedidos';
 
-  PedidoByProveedor(nombre_proveedor: string): Pedido[] {
-    return this.pedidos.filter(
-      pedido => pedido.nombre_proveedor.toLowerCase().includes(nombre_proveedor.toLowerCase())
+  private getHeaders() {
+    return {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.auth.getToken()}`,
+        'Content-Type': 'application/json'
+      })
+    };
+  }
+
+  PedidoByProveedor(nombre_proveedor: string = ''): Observable<Pedido[]> {
+    const body = {
+      Transaccion: 'OBTENER_TODOS',
+      ProveedorNombre: nombre_proveedor,
+      Pagina: 1,
+      RegistrosPorPagina: 100
+    };
+
+    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders()).pipe(
+      map(response => {
+        return response.data.map((p: any) => ({
+          id_pedido: p.IdPedido,
+          nombre_proveedor: p.ProveedorNombre,
+          fecha_creacion_pedido: p.FechaPedido, // Ojo con el formato de fecha
+          fecha_estimada_entrega: p.FechaEntregaEstimada,
+          estado: p.Estado,
+          total: p.Total,
+          observaciones: p.Observaciones || ''
+        }));
+      })
     );
   }
 
-  getDetallesByPedido(id_pedido: number): DetallePedido[] {
-    return this.detallesPedido.filter(
-      detalle => detalle.idPedido === id_pedido
+  getDetallesByPedido(id_pedido: number): Observable<DetallePedido[]> {
+    const body = {
+      Transaccion: 'OBTENER_POR_ID',
+      IdPedido: id_pedido
+    };
+
+    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders()).pipe(
+      map(response => {
+        const detalles = response.data.Detalles || [];
+
+        return detalles.map((d: any) => ({
+          idDetalle: d.IdDetalle,
+          idPedido: d.IdProducto,
+          producto: d.NombreProducto,
+          cantidad: d.Cantidad,
+          precioUnitario: d.PrecioUnitario,
+          total: d.Subtotal
+        }));
+      })
     );
   }
 
-  ReactivarPedido(idPedido: number){
-    const pedido = this.pedidos.find(p => p.id_pedido === idPedido);
-    if(pedido && pedido.estado === "Cancelado"){
-      pedido.estado = "Pendiente";
-    }
+  ReactivarPedido(idPedido: number): Observable<any> {
+    const body = {
+      Transaccion: 'EDITAR_ESTADO',
+      IdPedido: idPedido,
+      Estado: 'Pendiente'
+    };
+    return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
   }
 }
