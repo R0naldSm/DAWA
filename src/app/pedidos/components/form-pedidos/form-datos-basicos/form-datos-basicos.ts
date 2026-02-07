@@ -26,7 +26,7 @@ export class FormDatosBasicos {
 
   // metodo para obtener los nombres de los proveedores
   obtenerProveedores() {
-    this.proveedores = this.servicioProveedores.getProveedores()
+    //this.proveedores = this.servicioProveedores.getProveedores()
   }
 
   ProveedorSeleccionado(idProveedor: number) {

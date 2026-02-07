@@ -7,11 +7,11 @@
 
   @if(visibleLista){
     <div class="card shadow-sm overflow-y-scroll position-absolute w-100 z-1" style="max-height: 300px;">
-      @for(proveedor of datosFiltrados(); track proveedor.id){
+      <!-- @for(proveedor of datosFiltrados(); track proveedor.id){
         <button class="p-2 btn btn-light" (mousedown)="datoSeleccionado(proveedor)">
           {{proveedor.nombreEmpresa}}
         </button>
-      }
+      } -->
     </div>
   }
 </div>
