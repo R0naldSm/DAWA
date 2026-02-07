@@ -1,5 +1,4 @@
 import { ProveedorService } from '../../services/proveedorService';
-import { Proveedor } from '../../interfaces/proveedor';
 import { AuthService } from '../../services/auth';
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -23,6 +22,7 @@ export class Proveedores implements OnInit {
 
   buscarTexto: string = '';
   nombreUsuario: string = '';
+  verInactivos: boolean = false;
 
   mostrarModal: boolean = false;
   modoEdicion: boolean = false;
@@ -42,7 +42,7 @@ export class Proveedores implements OnInit {
   }
 
   cargarProveedores() {
-    this.proveedorService.getProveedores(this.buscarTexto).subscribe({
+    this.proveedorService.getProveedores(this.buscarTexto, this.verInactivos).subscribe({
       next: (data) => {
         this.proveedores = data.map((p: any) => ({
           id: p.IdProveedor || p.idProveedor,
@@ -51,11 +51,16 @@ export class Proveedores implements OnInit {
           categoria: p.Categoria || p.categoria,
           telefono: p.Telefono || p.telefono,
           email: p.Email || p.email,
-          direccion: p.Direccion || p.direccion
+          direccion: p.Direccion || p.direccion,
+          estado: p.Estado !== undefined ? p.Estado : p.estado
         }));
       },
       error: (e) => console.error('Error al cargar proveedores:', e)
     });
+  }
+
+  toggleVista() {
+    this.cargarProveedores();
   }
 
   get proveedoresFiltrados() {
@@ -89,15 +94,36 @@ export class Proveedores implements OnInit {
 
   eliminar(id: number) {
     if (!confirm('¿Seguro que desea eliminar?')) return;
-
     const p = { IdProveedor: id };
-
     this.proveedorService.gestionar(p, 'ELIMINAR').subscribe({
       next: () => {
-        alert('Eliminado');
+        alert('Eliminado correctamente');
         this.cargarProveedores();
       },
       error: (e) => alert('Error al eliminar')
+    });
+  }
+
+  reactivar(p: any) {
+    if(!confirm(`¿Desea reactivar al proveedor ${p.nombre}?`)) return;
+
+    const proveedorActivo = {
+        IdProveedor: p.id,
+        Nombre: p.nombre,
+        Ruc: p.ruc,
+        Categoria: p.categoria,
+        Telefono: p.telefono,
+        Email: p.email,
+        Direccion: p.direccion,
+        estado: 1
+    };
+
+    this.proveedorService.gestionar(proveedorActivo, 'EDITAR').subscribe({
+      next: () => {
+        alert('Proveedor reactivado exitosamente');
+        this.cargarProveedores();
+      },
+      error: () => alert('Error al reactivar')
     });
   }
 

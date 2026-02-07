@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
-import { Proveedor, FiltroProveedor } from '../interfaces/proveedor';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +10,7 @@ export class ProveedorService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
+  // URL BASE (Asegúrate que sea Singular si tu controller es ProveedorController)
   private apiUrl = 'http://localhost:5000/api/Proveedor';
 
   private getHeaders() {
@@ -23,16 +23,17 @@ export class ProveedorService {
     };
   }
 
-  getProveedores(busqueda: string = ''): Observable<Proveedor[]> {
-    const body: FiltroProveedor = {
+  getProveedores(busqueda: string = '', incluirInactivos: boolean = false): Observable<any[]> {
+    const body = {
       Busqueda: busqueda,
+      IncluirInactivos: incluirInactivos ? 1 : 0,
       Transaccion: 'CONSULTAR'
     };
-    return this.http.post<Proveedor[]>(`${this.apiUrl}/GetProveedores`, body, this.getHeaders());
+    return this.http.post<any[]>(`${this.apiUrl}/GetProveedores`, body, this.getHeaders());
   }
 
   gestionar(proveedor: any, transaccion: 'INSERTAR' | 'EDITAR' | 'ELIMINAR'): Observable<any> {
-    const body: Proveedor = {
+    const body: any = {
       IdProveedor: proveedor.id || proveedor.IdProveedor || 0,
       Ruc: proveedor.ruc || proveedor.Ruc,
       Nombre: proveedor.nombre || proveedor.Nombre,
@@ -41,13 +42,15 @@ export class ProveedorService {
       Email: proveedor.email || proveedor.Email,
       Contacto: proveedor.contacto || proveedor.Contacto,
       Direccion: proveedor.direccion || proveedor.Direccion,
+      Estado: proveedor.estado !== undefined ? proveedor.estado : null,
       Transaccion: transaccion
     };
 
+    // FIX 2: Ruta corregida a GestionarProveedor para evitar el 404
     return this.http.post(`${this.apiUrl}/GestionarProveedor`, body, this.getHeaders());
   }
 
-  getProveedorByNombre(nombre: string): Observable<Proveedor[]> {
+  getProveedorByNombre(nombre: string): Observable<any[]> {
     return this.getProveedores(nombre);
   }
 }
