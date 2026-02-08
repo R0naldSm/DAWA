@@ -19,7 +19,11 @@ export class Proveedores implements OnInit {
   private router = inject(Router);
 
   proveedores: any[] = [];
-  proveedoresFiltrados: any[] = [];
+  proveedoresFiltrados: any[] = []; // Lista COMPLETA filtrada (Activos o Eliminados)
+
+  // --- VARIABLES DE PAGINACIÓN ---
+  paginaActual: number = 1;
+  itemsPorPagina: number = 5;
 
   buscarTexto: string = '';
   nombreUsuario: string = '';
@@ -56,16 +60,42 @@ export class Proveedores implements OnInit {
           estado: p.Estado !== undefined ? p.Estado : p.estado
         }));
 
+        // Filtramos la lista completa
         if (this.verInactivos) {
            this.proveedoresFiltrados = listaCompleta.filter(p => p.estado === 0 || p.estado === false);
         } else {
            this.proveedoresFiltrados = listaCompleta.filter(p => p.estado === 1 || p.estado === true);
         }
+
+        // Reiniciamos a la página 1 cuando cargan nuevos datos
+        this.paginaActual = 1;
       },
       error: (e) => console.error('Error al cargar proveedores:', e)
     });
   }
 
+  // --- LÓGICA DE PAGINACIÓN ---
+
+  // Esto es lo que verá la tabla (solo 5 registros)
+  get proveedoresPaginados() {
+    const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+    const fin = inicio + this.itemsPorPagina;
+    return this.proveedoresFiltrados.slice(inicio, fin);
+  }
+
+  // Calcular total de páginas
+  get totalPaginas() {
+    return Math.ceil(this.proveedoresFiltrados.length / this.itemsPorPagina) || 1;
+  }
+
+  cambiarPagina(delta: number) {
+    const nuevaPagina = this.paginaActual + delta;
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
+      this.paginaActual = nuevaPagina;
+    }
+  }
+
+// Validaciones
   validarFormulario(): boolean {
     const { ruc, telefono, email, nombre, categoria } = this.datosFormulario;
 
@@ -74,31 +104,17 @@ export class Proveedores implements OnInit {
       return false;
     }
 
-    if (!ruc) {
-      alert("El RUC es obligatorio."); return false;
-    }
-    if (ruc.length !== 13) {
-      alert(`El RUC debe tener exactamente 13 dígitos. (Tiene ${ruc.length})`);
-      return false;
-    }
-    if (!ruc.endsWith("001")) {
-      alert("El RUC debe terminar obligatoriamente en '001'.");
-      return false;
-    }
+    if (!ruc) { alert("El RUC es obligatorio."); return false; }
+    if (ruc.length !== 13) { alert(`El RUC debe tener exactamente 13 dígitos. (Tiene ${ruc.length})`); return false; }
+    if (!ruc.endsWith("001")) { alert("El RUC debe terminar obligatoriamente en '001'."); return false; }
 
     if (telefono) {
-      if (telefono.length !== 10) {
-        alert(`El Teléfono debe tener exactamente 10 dígitos. (Tiene ${telefono.length})`);
-        return false;
-      }
+      if (telefono.length !== 10) { alert(`El Teléfono debe tener exactamente 10 dígitos.`); return false; }
     }
 
     if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert("Formato de correo inválido.");
-        return false;
-      }
+      if (!emailRegex.test(email)) { alert("Formato de correo inválido."); return false; }
     }
 
     return true;
@@ -106,9 +122,7 @@ export class Proveedores implements OnInit {
 
   soloNumeros(event: any) {
     const charCode = (event.which) ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) return false;
     return true;
   }
 
