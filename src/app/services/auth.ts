@@ -78,5 +78,13 @@ export class AuthService {
   cerrarLogin() { this.mostrarLoginModal.next(false); }
 
   existeUsuario(u: string): boolean { return true; }
-  actualizarClave(u: string, c: string): boolean { return true; }
+
+  actualizarClave(usuario: string, nuevaClave: string): Observable<any> {
+    const body: any = {
+      Nombre_Usuario: usuario,
+      Clave: nuevaClave,
+      Transaccion: 'RECUPERAR'
+    };
+    return this.http.post(`${this.apiUrl}/RecuperarClave`, body);
+  }
 }
