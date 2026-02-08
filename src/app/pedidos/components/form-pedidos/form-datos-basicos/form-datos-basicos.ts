@@ -12,6 +12,10 @@ import { Proveedor } from '../../../../interfaces/proveedor';
 })
 export class FormDatosBasicos {
 
+  private proveedorService = inject(ProveedorService);
+  buscarTexto: string = '';
+  verInactivos: boolean = false;
+
   ngOnInit() {
     this.obtenerProveedores()
   }
@@ -22,11 +26,20 @@ export class FormDatosBasicos {
   // proveedor seleccionado
   proveedorSeleccionado = output<number>()
   // propiedades
-  proveedores: Proveedor[] = []
+  proveedores: any[] = []
 
   // metodo para obtener los nombres de los proveedores
   obtenerProveedores() {
     //this.proveedores = this.servicioProveedores.getProveedores()
+    this.proveedorService.getProveedores(this.buscarTexto, this.verInactivos).subscribe({
+      next: (data) => {
+        this.proveedores = data.map((p: any) => ({
+          id: p.IdProveedor || p.idProveedor,
+          nombre: p.Nombre || p.nombre,
+        }));
+      },
+      error: (e) => console.error('Error al cargar proveedores:', e)
+    });
   }
 
   ProveedorSeleccionado(idProveedor: number) {

@@ -12,10 +12,10 @@
   <tbody>
     @for (producto of detallePedido(); track producto.idDetalle) {
       <tr class="text-center">
-        <td>{{producto.producto}}</td>
+        <td>{{producto.nombreProducto}}</td>
         <td>{{producto.cantidad}}</td>
         <td>{{producto.precioUnitario}}</td>
-        <td class="fw-semibold">${{producto.total}}</td>
+        <td class="fw-semibold">${{producto.subtotal}}</td>
       </tr>
     }
   </tbody>

@@ -11,7 +11,7 @@ import { DetallePedido } from '../../../interfaces/detallePedido';
   styleUrl: './info-pedido.css',
 })
 export class InfoPedido {
-  infoProveedor = input<Proveedor | null>()
+  infoProveedor = input<any | null>()
   pedidoSeleccionado = input<Pedido | null>()
-  productosPedidos = input.required<DetallePedido[]>()
+  productosPedidos = input.required<any>()
 }

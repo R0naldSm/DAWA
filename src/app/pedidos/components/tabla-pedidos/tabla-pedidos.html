@@ -1,7 +1,6 @@
 <table class="table table-hover border shadow p-3 mb-5 bg-body-tertiary w-100" style="min-width: 1100px;">
   <thead>
     <tr class="text-center">
-      <th scope="col">#</th>
       <th scope="col">Proveedor</th>
       <th scope="col">Fecha del pedido</th>
       <th scope="col">Fecha estima de entrega</th>
@@ -15,7 +14,6 @@
   <tbody>
     @for (pedido of pedidos(); track pedido.id_pedido) {
       <tr>
-        <td class="text-center">{{pedido.id_pedido}}</td>
         <td class="text-center">{{pedido.nombre_proveedor}}</td>
         <td class="text-center">{{pedido.fecha_creacion_pedido}}</td>
         <td class="text-center">{{pedido.fecha_estimada_entrega}}</td>

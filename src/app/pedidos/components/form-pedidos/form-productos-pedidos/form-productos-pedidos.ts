@@ -17,9 +17,10 @@ export class FormProductosPedidos {
   constructor() {
     // Detectar cambios en el input
     effect(() => {
-      const idProveedor = this.idProveedorSeleccionado();
-      console.log('ID proveedor cambió:', idProveedor);
+      this.idProveedorSeleccionado();
+      this.productosTabla = [];
       this.obtenerProductosProveedor();
+      this.actualizarEstadoBoton();
     });
   }
 
@@ -27,7 +28,8 @@ export class FormProductosPedidos {
   fb = inject(NonNullableFormBuilder)
   formProducto = this.fb.group({
     id: [0],
-    cantidad: [1]
+    cantidad: [1],
+    precioUnitario: [0]
   })
 
   // servicios
@@ -40,10 +42,12 @@ export class FormProductosPedidos {
   IdProductoEliminado = output<number>();
 
   // variables
-  productos: Producto[] = []
+  productos: any[] = []
   productosTabla: IProductoPedido[] = []
-  TemporalProductos: IProductoPedido = { id: 0, cantidad: 0 }
+  TemporalProductos: IProductoPedido = { id: 0, cantidad: 0 , precioUnitario: 0};
   resetearSelectorProducto: boolean = false;
+  desactivarBotonAgregar: boolean = true;
+
   
   
 
@@ -53,11 +57,20 @@ export class FormProductosPedidos {
     if(this.productoEstaAgregado(producto.id)){
       return;
     }
-    this.TemporalProductos = producto;
+
+    const productoEncontrado = this.productos.find(p => p.id === producto.id);
+
+    if (productoEncontrado) {
+      this.TemporalProductos = {
+        ...producto,
+        precioUnitario: productoEncontrado.precio
+      };
+    }
 
     this.agregarATabla(producto.id, producto.cantidad);
 
-    this.formProducto.reset({ id: 0, cantidad: 1 });
+    this.formProducto.reset({ id: 0, cantidad: 1, precioUnitario: 0 });
+    this.actualizarEstadoBoton();
     this.emitirProducto.emit(this.TemporalProductos);
 
 
@@ -68,16 +81,35 @@ export class FormProductosPedidos {
   }
 
   obtenerProductosProveedor() {
-    this.productos = this.servicioProductos.getByProveedor(this.idProveedorSeleccionado())
+    this.servicioProductos.getProductosAPI().subscribe({
+      next: (data) => {
+        const productosBD = data.map((p: any) => ({
+          id: p.idProductos,
+          nombre: p.nombre,
+          precio: p.precio,
+          idProveedor: p.idProveedor
+        }));
+
+        this.productos = productosBD.filter((p: any) => p.idProveedor === this.idProveedorSeleccionado());
+      },
+      error: (error) => {
+        console.error('Error al obtener productos:', error);
+      }
+    });
   }
 
   obtenerIdProductoSeleccionado(idProducto: number) {
     this.formProducto.get('id')!.setValue(idProducto);
+    this.actualizarEstadoBoton();
   }
 
   agregarATabla(idProducto: number, cantidad: number) {
 
     if(this.productosTabla.find(p => p.id === idProducto)){
+      return;
+    }
+
+    if (cantidad <= 0) {
       return;
     }
 
@@ -101,6 +133,14 @@ export class FormProductosPedidos {
 
   removerProducto(idProducto: number) {
     this.productosTabla = this.productosTabla.filter(p => p.id !== idProducto);
+    this.formProducto.reset({ id: 0, cantidad: 1, precioUnitario: 0 });
+    this.actualizarEstadoBoton();
     this.IdProductoEliminado.emit(idProducto);
   }
+
+  actualizarEstadoBoton() {
+    const idProducto = this.formProducto.get('id')?.value;
+    this.desactivarBotonAgregar = idProducto === 0 || idProducto === null;
+  }
+
 }

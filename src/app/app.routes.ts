@@ -23,19 +23,15 @@ export const routes: Routes = [
   // --- PEDIDOS ---
   {
     path: 'pedidos',
-    redirectTo: 'pedidos/1',
-  },
-  {
-    path: 'pedidos/:pagina',
     loadComponent: () => import('./pedidos/components/lista-pedidos/lista-pedidos').then(m => m.ListaPedidos)
   },
   {
     path: 'pedido/crear',
-    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido').then(m => m.NuevoPedido)
+    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos').then(m => m.NuevoPedido)
   },
   {
     path: 'pedido/editar/:id',
-    loadComponent: () => import('./pedidos/components/nuevo-pedido/nuevo-pedido').then(m => m.NuevoPedido)
+    loadComponent: () => import('./pedidos/components/form-pedidos/form-pedidos').then(m => m.NuevoPedido)
   },
 
   // --- OTROS ---

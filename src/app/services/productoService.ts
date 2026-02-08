@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Producto } from '../interfaces/productos';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root',
@@ -242,5 +243,29 @@ export class ProductoService {
     const nueva = !(p.disponible ?? p.disponibilidad);
     p.disponibilidad = nueva;
     p.disponible = nueva;
+  }
+
+
+  // consulta a la API (necesario para pedido, modificar si asi lo necesitas)
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
+
+  private apiUrl = 'http://localhost:5000/api/Productos';
+
+  private getHeaders() {
+    const token = this.auth.getToken();
+    return {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      })
+    };
+  }
+
+  getProductosAPI(): Observable<any[]> {
+    const body = {
+      Transaccion: 'CONSULTAR'
+    };
+    return this.http.post<any[]>(`${this.apiUrl}/GetProductos`, body, this.getHeaders());
   }
 }

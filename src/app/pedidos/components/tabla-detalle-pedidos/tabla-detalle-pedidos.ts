@@ -8,5 +8,5 @@ import { DetallePedido } from '../../../interfaces/detallePedido';
   styleUrl: './tabla-detalle-pedidos.css',
 })
 export class TablaDetallePedidos {
-  detallePedido = input.required<DetallePedido[]>();
+  detallePedido = input.required<any[]>();
 }

@@ -11,9 +11,7 @@
       <input formControlName="nombre_proveedor" type="text" class="form-control" placeholder="Buscar por nombre de proveedor...">
     </form>
 
-    <app-tabla-pedidos [pedidos]="listaPedidos(pagina)"/>
+    <app-tabla-pedidos [pedidos]="listaPedidos()"/>
   </div>
-
-  <app-paginacion class="mt-auto py-3" [pagina]="pagina" [totalPaginas]="totalPaginas()"/> 
 
 </section>

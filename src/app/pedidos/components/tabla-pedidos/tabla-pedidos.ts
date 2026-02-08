@@ -14,30 +14,30 @@ import { RouterLink } from "@angular/router";
   styleUrl: './tabla-pedidos.css',
 })
 export class TablaPedidos {
+
   pedidos = input.required<Pedido[]>();
 
   proveedorService = inject(ProveedorService);
   pedidoService = inject(PedidoService);
 
   pedidoSeleccionado: Pedido | null = null;
-  infoProveedor: Proveedor | null | undefined = null;
-  productosPedidos: DetallePedido[] = [];
+  infoProveedor: any | null | undefined = null;
+  productosPedidos: any[] = [];
 
   seleccionarPedido(pedido: Pedido) {
     this.pedidoSeleccionado = pedido;
-
     this.proveedorService.getProveedorByNombre(pedido.nombre_proveedor).subscribe({
-      next: (provs) => {
-        this.infoProveedor = provs.length > 0 ? provs[0] : null;
+      next: (respuesta) => {
+        this.infoProveedor = respuesta[0];
       },
-      error: (e) => console.error(e)
+      error: (e) => console.error('Error cargando proveedor', e)
     });
 
     this.pedidoService.getDetallesByPedido(pedido.id_pedido).subscribe({
-      next: (detalles) => {
-        this.productosPedidos = detalles;
+      next: (respuesta) => {
+        this.productosPedidos = respuesta.data;
       },
-      error: (e) => console.error('Error cargando detalles', e)
+      error: (e) => console.error('Error cargando detalles del pedido', e)
     });
   }
 

@@ -1,5 +1,5 @@
 <div class="bg-body-tertiary border-bottom border-1"> <div class="d-flex px-3 pt-3 justify-content-center">
-      <h2 class="modal-title fs-5 fw-bold text-success" id="staticBackdropLabel">{{infoProveedor()?.Nombre}}</h2>
+      <h2 class="modal-title fs-5 fw-bold text-success" id="staticBackdropLabel">{{infoProveedor()?.nombre}}</h2>
       <div class="ms-auto">
         @if(pedidoSeleccionado()?.estado == 'Pendiente'){
           <span class="fw-semibold text-warning bg-warning-subtle py-1 px-2 rounded-4">{{pedidoSeleccionado()?.estado}}</span>
@@ -12,17 +12,21 @@
         }
       </div>
     </div>
-    <p class="ps-3 small">RUC: {{infoProveedor()?.Ruc}}</p>
+    <p class="ps-3 small">RUC: {{infoProveedor()?.ruc}}</p>
 </div>
 
 <div class="p-4 pb-2"> <span class="fw-semibold text-secondary" style="letter-spacing: 1px;">DATOS DEL PROVEEDOR</span>
   <div class="mt-4 row">
 
     <div class="d-flex col">
-      <i class="bi bi-person-fill fs-2 pe-2 text-success"></i>
+      <i class="bi bi-geo-alt-fill fs-2 pe-2 text-success"></i>
       <div>
-        <span class="small text-secondary">Persona de contacto</span>
-        <p>{{infoProveedor()?.Contacto}}</p>
+        <span class="small text-secondary">Dirección</span>
+        @if(infoProveedor()?.direccion){
+          <p>{{infoProveedor()?.direccion}}</p>
+        }@else{
+          <p class="text-secondary fst-italic">Sin dirección</p>
+        }
       </div>
     </div>
 
@@ -30,7 +34,11 @@
       <i class="bi bi-telephone-fill fs-2 pe-2 text-success"></i>
       <div>
         <span class="small text-secondary">Teléfono</span>
-        <p>{{infoProveedor()?.Telefono}}</p>
+        @if(infoProveedor()?.telefono){
+          <p>{{infoProveedor()?.telefono}}</p>
+        }@else{
+          <p class="text-secondary fst-italic">Sin teléfono</p>
+        }
       </div>
     </div>
 
@@ -38,7 +46,11 @@
       <i class="bi bi-envelope-fill fs-2 pe-2 text-success"></i>
       <div>
         <span class="small text-secondary">Correo electrónico</span>
-        <p>{{infoProveedor()?.Email}}</p>
+        @if(infoProveedor()?.email){
+          <p>{{infoProveedor()?.email}}</p>
+        }@else{
+          <p class="text-secondary fst-italic">Sin correo electrónico</p>
+        }
       </div>
     </div>
 
@@ -65,13 +77,13 @@
 
 <div class="p-4 d-flex flex-column">
   <span class="fw-semibold text-secondary mb-4" style="letter-spacing: 1px;">PRODUCTOS DEL PEDIDO</span>
-  <app-tabla-detalle-pedidos [detallePedido]="productosPedidos()"/>
+  <app-tabla-detalle-pedidos [detallePedido]="productosPedidos().detalles"/>
   <p class="fs-2 ms-auto text-success"><span class="fw-bold">Total:</span> ${{pedidoSeleccionado()?.total}}</p>
 </div>
 
 <div class="p-4">
   <span class="fw-semibold text-secondary mb-4" style="letter-spacing: 1px;">OBSERVACIONES</span>
   <div class="bg-warning-subtle border-start border-3 border-warning p-2 mt-4">
-    <p class="small">{{pedidoSeleccionado()?.observaciones}}</p>
+    <p class="small">{{productosPedidos()?.observaciones}}</p>
   </div>
 </div>

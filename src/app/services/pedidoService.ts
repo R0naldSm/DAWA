@@ -22,49 +22,21 @@ export class PedidoService {
     };
   }
 
-  PedidoByProveedor(nombre_proveedor: string = ''): Observable<Pedido[]> {
+  ObtenerPedidos(): Observable<any> {
     const body = {
-      Transaccion: 'OBTENER_TODOS',
-      ProveedorNombre: nombre_proveedor,
-      Pagina: 1,
-      RegistrosPorPagina: 100
+      "transaccion": "OBTENER_TODOS"
     };
 
-    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders()).pipe(
-      map(response => {
-        return response.data.map((p: any) => ({
-          id_pedido: p.IdPedido,
-          nombre_proveedor: p.ProveedorNombre,
-          fecha_creacion_pedido: p.FechaPedido, // Ojo con el formato de fecha
-          fecha_estimada_entrega: p.FechaEntregaEstimada,
-          estado: p.Estado,
-          total: p.Total,
-          observaciones: p.Observaciones || ''
-        }));
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders())
   }
 
-  getDetallesByPedido(id_pedido: number): Observable<DetallePedido[]> {
+  getDetallesByPedido(id_pedido: number): Observable<any> {
     const body = {
-      Transaccion: 'OBTENER_POR_ID',
-      IdPedido: id_pedido
+      transaccion: 'OBTENER_POR_ID',
+      idPedido: id_pedido
     };
 
-    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders()).pipe(
-      map(response => {
-        const detalles = response.data.Detalles || [];
-
-        return detalles.map((d: any) => ({
-          idDetalle: d.IdDetalle,
-          idPedido: d.IdProducto,
-          producto: d.NombreProducto,
-          cantidad: d.Cantidad,
-          precioUnitario: d.PrecioUnitario,
-          total: d.Subtotal
-        }));
-      })
-    );
+    return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders())
   }
 
   ReactivarPedido(idPedido: number): Observable<any> {
@@ -73,6 +45,29 @@ export class PedidoService {
       IdPedido: idPedido,
       Estado: 'Pendiente'
     };
+    return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
+  }
+
+  crearPedido(pedido: any) {
+
+    const datosBasicos = pedido.datosBasicos;
+    const productos = pedido.productos;
+    const detalles = productos.map((p: any) => ({
+      IdProducto: parseInt(p.IdProducto) || parseInt(p.id),
+      Cantidad: parseInt(p.Cantidad) || parseInt(p.cantidad),
+      PrecioUnitario: parseFloat(p.PrecioUnitario) || parseFloat(p.precioUnitario)
+    }));
+
+    const body = {
+      "Transaccion": "CREAR_PEDIDO",
+      "IdProveedor": datosBasicos.proveedor,
+      "Dia": datosBasicos.dia,
+      "Mes": datosBasicos.mes,
+      "Ano": datosBasicos.anio,
+      "Observaciones": datosBasicos.observaciones || '',
+      "Detalles": detalles
+    }
+
     return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
   }
 }
