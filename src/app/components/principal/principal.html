@@ -1,4 +1,4 @@
-<div class="container mt-5 mb-5">
+<div class="container mt-5 mb-5 animate__animated animate__fadeIn">
   <h2 class="text-success fw-bold mb-4 text-center">
     <i class="bi bi-speedometer2 me-2"></i>
     Panel Principal - AgroDistribution
@@ -10,9 +10,8 @@
 
   <div class="row g-4">
 
-    <!-- Proveedores -->
     <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
+      <div class="card shadow-sm p-4 dashboard-card h-100">
         <div class="icon-container bg-success bg-opacity-10 text-success">
           <i class="bi bi-people-fill"></i>
         </div>
@@ -20,13 +19,12 @@
         <p class="text-secondary">
           Registrar, actualizar y administrar proveedores agrícolas.
         </p>
-        <button class="btn btn-success w-100" routerLink="/proveedores">Ingresar</button>
+        <button class="btn btn-success w-100 mt-auto" routerLink="/proveedores">Ingresar</button>
       </div>
     </div>
 
-    <!-- Productos -->
     <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
+      <div class="card shadow-sm p-4 dashboard-card h-100">
         <div class="icon-container bg-success bg-opacity-10 text-success">
           <i class="bi bi-box-seam"></i>
         </div>
@@ -34,13 +32,12 @@
         <p class="text-secondary">
           Administración de productos ofrecidos por los proveedores.
         </p>
-        <button class="btn btn-success w-100" routerLink="/productos">Ingresar</button>
+        <button class="btn btn-success w-100 mt-auto" routerLink="/productos">Ingresar</button>
       </div>
     </div>
 
-    <!-- Pedidos -->
     <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
+      <div class="card shadow-sm p-4 dashboard-card h-100">
         <div class="icon-container bg-success bg-opacity-10 text-success">
           <i class="bi bi-cart-check-fill"></i>
         </div>
@@ -48,13 +45,12 @@
         <p class="text-secondary">
           Generación, control y seguimiento de pedidos realizados.
         </p>
-        <button class="btn btn-success w-100" routerLink="/pedidos">Ingresar</button>
+        <button class="btn btn-success w-100 mt-auto" routerLink="/pedidos">Ingresar</button>
       </div>
     </div>
 
-    <!-- Entregas -->
     <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
+      <div class="card shadow-sm p-4 dashboard-card h-100">
         <div class="icon-container bg-success bg-opacity-10 text-success">
           <i class="bi bi-truck"></i>
         </div>
@@ -62,35 +58,33 @@
         <p class="text-secondary">
           Control del estado de entregas y recepción de productos.
         </p>
-        <button class="btn btn-success w-100">Ingresar</button>
+        <button class="btn btn-success w-100 mt-auto">Ingresar</button>
       </div>
     </div>
 
-    <!-- Pagos -->
-    <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
-        <div class="icon-container bg-success bg-opacity-10 text-success">
+    <div class="col-md-4" *ngIf="esAdmin">
+      <div class="card shadow-sm p-4 dashboard-card h-100 border-warning border-2">
+        <div class="icon-container bg-warning bg-opacity-10 text-warning">
           <i class="bi bi-cash-coin"></i>
         </div>
-        <h5 class="fw-bold mt-3">Pagos y Finanzas</h5>
+        <h5 class="fw-bold mt-3 text-warning">Pagos y Finanzas</h5>
         <p class="text-secondary">
           Seguimiento de pagos realizados a proveedores.
         </p>
-        <button class="btn btn-success w-100" routerLink="/pagos">Ingresar</button>
+        <button class="btn btn-warning text-white w-100 mt-auto" routerLink="/pagos">Ingresar</button>
       </div>
     </div>
 
-    <!-- Dashboard -->
-    <div class="col-md-4">
-      <div class="card shadow-sm p-4 dashboard-card">
-        <div class="icon-container bg-success bg-opacity-10 text-success">
+    <div class="col-md-4" *ngIf="esAdmin">
+      <div class="card shadow-sm p-4 dashboard-card h-100 border-primary border-2">
+        <div class="icon-container bg-primary bg-opacity-10 text-primary">
           <i class="bi bi-graph-up-arrow"></i>
         </div>
-        <h5 class="fw-bold mt-3">Dashboard General</h5>
+        <h5 class="fw-bold mt-3 text-primary">Dashboard General</h5>
         <p class="text-secondary">
           Reportes, gráficos y métricas del sistema AgroDistribution.
         </p>
-        <button class="btn btn-success w-100" routerLink="/dashboard">Ingresar</button>
+        <button class="btn btn-primary w-100 mt-auto" routerLink="/dashboard">Ingresar</button>
       </div>
     </div>
 

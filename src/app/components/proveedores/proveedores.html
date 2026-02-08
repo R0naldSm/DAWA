@@ -28,7 +28,7 @@
         <input type="text" class="form-control border-0"
                placeholder="Buscar por nombre o RUC..."
                [(ngModel)]="buscarTexto"
-               (keyup.enter)="buscar()">
+               (ngModelChange)="buscar()">
       </div>
 
       <div class="form-check form-switch ms-3">
@@ -37,7 +37,7 @@
                [(ngModel)]="verInactivos"
                (change)="toggleVista()">
         <label class="form-check-label fw-bold text-secondary" for="switchInactivos">
-          {{ verInactivos ? 'Ocultar Eliminados' : 'Ver Eliminados' }}
+          {{ verInactivos ? 'Ver Solo Eliminados' : 'Ver Activos' }}
         </label>
       </div>
 
@@ -58,7 +58,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of proveedoresFiltrados"
+          <tr *ngFor="let p of proveedoresPaginados"
               [class.table-danger]="p.estado === 0 || p.estado === false">
 
             <td class="ps-4 fw-bold text-dark">{{ p.nombre }}</td>
@@ -95,12 +95,37 @@
           </tr>
           <tr *ngIf="proveedoresFiltrados.length === 0">
             <td colspan="6" class="text-center py-5 text-muted">
-              No se encontraron proveedores
+              {{ verInactivos ? 'No hay proveedores eliminados' : 'No se encontraron proveedores activos' }}
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <div class="card-footer bg-white py-3" *ngIf="proveedoresFiltrados.length > 0">
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="text-muted">
+          Mostrando {{ proveedoresPaginados.length }} de {{ proveedoresFiltrados.length }} registros
+        </small>
+
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="paginaActual === 1">
+              <button class="page-link text-success" (click)="cambiarPagina(-1)">Anterior</button>
+            </li>
+            <li class="page-item disabled">
+              <span class="page-link text-dark border-0">
+                Página {{ paginaActual }} de {{ totalPaginas }}
+              </span>
+            </li>
+            <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+              <button class="page-link text-success" (click)="cambiarPagina(1)">Siguiente</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
   </div>
 
   <div class="modal-overlay" *ngIf="mostrarModal">
@@ -119,8 +144,12 @@
           </div>
           <div class="row g-2">
             <div class="col-6 mb-3">
-              <label class="form-label small fw-bold">RUC</label>
-              <input type="text" class="form-control" [(ngModel)]="datosFormulario.ruc">
+              <label class="form-label small fw-bold">RUC (13 Dígitos)</label>
+              <input type="text" class="form-control"
+                     [(ngModel)]="datosFormulario.ruc"
+                     maxlength="13"
+                     (keypress)="soloNumeros($event)"
+                     placeholder="Ej: 0990001110001">
             </div>
             <div class="col-6 mb-3">
               <label class="form-label small fw-bold">Categoría</label>
@@ -129,12 +158,16 @@
           </div>
           <div class="row g-2">
             <div class="col-6 mb-3">
-              <label class="form-label small fw-bold">Teléfono</label>
-              <input type="text" class="form-control" [(ngModel)]="datosFormulario.telefono">
+              <label class="form-label small fw-bold">Teléfono (10 Dígitos)</label>
+               <input type="text" class="form-control"
+                     [(ngModel)]="datosFormulario.telefono"
+                     maxlength="10"
+                     (keypress)="soloNumeros($event)"
+                     placeholder="Ej: 0991234567">
             </div>
             <div class="col-6 mb-3">
               <label class="form-label small fw-bold">Email</label>
-              <input type="email" class="form-control" [(ngModel)]="datosFormulario.email">
+              <input type="email" class="form-control" [(ngModel)]="datosFormulario.email" placeholder="nombre@dominio.com">
             </div>
           </div>
           <div class="mb-3">

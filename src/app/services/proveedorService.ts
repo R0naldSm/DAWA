@@ -46,7 +46,6 @@ export class ProveedorService {
       Transaccion: transaccion
     };
 
-    // FIX 2: Ruta corregida a GestionarProveedor para evitar el 404
     return this.http.post(`${this.apiUrl}/GestionarProveedor`, body, this.getHeaders());
   }
 

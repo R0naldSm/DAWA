@@ -16,31 +16,20 @@ export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  // Variables de Control Visual
   vistaActual: string = 'login';
-
-  // Datos del Formulario
   loginData = { usuario: '', clave: '' };
-
-  // Datos de Registro
   confirmarClave: string = '';
   registroData = { nombres: '', usuario: '', clave: '', rol: 'OPERADOR' };
-
-  // Variables de Recuperación (Las que faltaban)
   pasoRecuperacion: number = 1;
   usuarioRecuperar: string = '';
   nuevaClave: string = '';
   confirmarNuevaClave: string = '';
-
-  // --- LÓGICA DE CONEXIÓN ---
 
   procesarLogin() {
     if (!this.loginData.usuario || !this.loginData.clave) {
       alert('Por favor complete los campos.');
       return;
     }
-
-    // Llamada real al Docker
     this.auth.login(this.loginData.usuario, this.loginData.clave).subscribe({
       next: (res) => {
         alert(`¡Bienvenido al Sistema!`);
@@ -66,34 +55,42 @@ export class Login {
       },
       error: (err) => {
         console.error(err);
-        // El backend devuelve error en el body a veces
         const mensaje = err.error?.error || 'Error al procesar el registro.';
         alert(mensaje);
       }
     });
   }
 
-  // --- LÓGICA VISUAL (Sin cambios, solo para que funcione el HTML) ---
-
   verificarUsuarioExiste() {
     if(!this.usuarioRecuperar) return;
-    // Simulado
     this.pasoRecuperacion = 2;
   }
 
   guardarNuevaClave() {
     if (this.nuevaClave !== this.confirmarNuevaClave) {
-      alert('Las claves no coinciden');
+      alert('Las contraseñas no coinciden');
       return;
     }
-    alert('Clave actualizada (Simulación)');
-    this.cambiarVista('login');
+
+    if (this.nuevaClave.length < 4) {
+      alert('La contraseña es muy corta');
+      return;
+    }
+    this.auth.actualizarClave(this.usuarioRecuperar, this.nuevaClave).subscribe({
+      next: (res: any) => {
+        alert(res.mensaje || 'Clave actualizada correctamente');
+        this.cambiarVista('login');
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error: ' + (err.error?.error || 'No se pudo actualizar la clave'));
+      }
+    });
   }
 
   cambiarVista(vista: string) {
     this.vistaActual = vista;
     this.pasoRecuperacion = 1;
-    // Limpieza
     this.usuarioRecuperar = '';
     this.nuevaClave = '';
   }
