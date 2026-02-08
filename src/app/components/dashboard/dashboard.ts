@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DashboardService } from './../../services/dashboardServices';
 
 interface Estadistica {
   titulo: string;
