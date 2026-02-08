@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { Pedido } from '../../../interfaces/pedido';
 import { Proveedor } from '../../../interfaces/proveedor';
 import { DetallePedido } from '../../../interfaces/detallePedido';
@@ -24,6 +24,8 @@ export class TablaPedidos {
   infoProveedor: any | null | undefined = null;
   productosPedidos: any[] = [];
 
+  recargarPedidos = output<boolean>();
+
   seleccionarPedido(pedido: Pedido) {
     this.pedidoSeleccionado = pedido;
     this.proveedorService.getProveedorByNombre(pedido.nombre_proveedor).subscribe({
@@ -41,16 +43,18 @@ export class TablaPedidos {
     });
   }
 
-  reactivar(idPedido: number){
-    this.pedidoService.ReactivarPedido(idPedido).subscribe({
+  cambiarEstado(idPedido: number, estado: string){
+    this.pedidoService.CambiarEstado(idPedido, estado).subscribe({
       next: () => {
-        alert("Pedido reactivado correctamente");
+        alert(`Pedido marcado como ${estado} correctamente`);
+        this.recargarPedidos.emit(true);
       },
-      error: (e) => alert("Error al reactivar")
+      error: (e) => alert(`Error al marcar como ${estado}`)
     });
   }
 
-  enviar(){
+  enviar(idPedido: number) {
     alert("Pedido enviado");
+    this.cambiarEstado(idPedido, 'En proceso');
   }
 }

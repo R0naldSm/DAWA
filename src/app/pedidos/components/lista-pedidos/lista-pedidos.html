@@ -11,7 +11,7 @@
       <input formControlName="nombre_proveedor" type="text" class="form-control" placeholder="Buscar por nombre de proveedor...">
     </form>
 
-    <app-tabla-pedidos [pedidos]="listaPedidos()"/>
+    <app-tabla-pedidos [pedidos]="listaPedidos()" (recargarPedidos)="recargarPedidos($event)"/>
   </div>
 
 </section>

@@ -1,9 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from './auth';
-import { Pedido } from '../interfaces/pedido';
-import { DetallePedido } from '../interfaces/detallePedido';
 
 @Injectable({
   providedIn: 'root',
@@ -39,11 +37,11 @@ export class PedidoService {
     return this.http.post<any>(`${this.apiUrl}/GetPedidos`, body, this.getHeaders())
   }
 
-  ReactivarPedido(idPedido: number): Observable<any> {
+  CambiarEstado(idPedido: number, estado: string): Observable<any> {
     const body = {
-      Transaccion: 'EDITAR_ESTADO',
+      Transaccion: 'CAMBIAR_ESTADO',
       IdPedido: idPedido,
-      Estado: 'Pendiente'
+      Estado: estado
     };
     return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
   }

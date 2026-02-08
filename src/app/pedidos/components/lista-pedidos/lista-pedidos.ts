@@ -49,4 +49,9 @@ export class ListaPedidos implements OnInit {
     return this.todosLosPedidos.filter(p => p.nombre_proveedor.toLowerCase().includes(nombreProveedor));
   }
 
+  recargarPedidos(event: boolean) {
+    if(event) {
+      this.cargarDatos();
+    }
+  }
 }

@@ -49,13 +49,14 @@
               </button>
               <ul class="dropdown-menu">
                 @if(pedido.estado == 'Pendiente') {
-                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="enviar()">Enviar</a></li>
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="enviar(pedido.id_pedido)">Enviar</a></li>
                 }
                 @if(pedido.estado == 'En proceso') {
-                  <li><a class="dropdown-item" style="cursor: pointer;">Cancelar</a></li>
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="cambiarEstado(pedido.id_pedido, 'Cancelado')">Cancelar</a></li>
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="cambiarEstado(pedido.id_pedido, 'Entregado')">Entregado</a></li>
                 }
                 @if(pedido.estado == 'Cancelado') {
-                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="reactivar(pedido.id_pedido)">Reactivar</a></li>
+                  <li><a class="dropdown-item" style="cursor: pointer;" (click)="cambiarEstado(pedido.id_pedido, 'Pendiente')">Reactivar</a></li>
                 }
               </ul>
             }
