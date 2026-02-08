@@ -3,17 +3,21 @@
     <h4 class="card-title mb-4 text-success">{{titulo}}</h4>
 
     <form [formGroup]="formPedido">
-      <app-form-datos-basicos [formDatosBasicos]="datosBasicosForm" (proveedorSeleccionado)="guardarIdProveedorSeleccionado($event)"/>
+      <app-form-datos-basicos [formDatosBasicos]="datosBasicosForm" (proveedorSeleccionado)="guardarIdProveedorSeleccionado($event)" [proveedorCargado]="proveedorCargado"/>
       
       <div class="card shadow-sm mt-4">
-        <app-form-productos-pedidos [idProveedorSeleccionado]="IdProveedorSeleccionado" (emitirProducto)="guardarProductoPedido($event)" (IdProductoEliminado)="eliminarProductoPedido($event)"/>
+        <app-form-productos-pedidos [idProveedorSeleccionado]="IdProveedorSeleccionado" (emitirProducto)="guardarProductoPedido($event)" (IdProductoEliminado)="eliminarProductoPedido($event)" [cargarProductosTabla]="productosTabla"/>
 
         <div class="d-flex justify-content-end mb-3 px-4">
           <h4 class="mb-0">Total: <span id="total" class="text-primary">$ {{TotalPedido}}</span></h4>
         </div>
 
         <div class="text-center p-4">
-          <button class="btn btn-success btn-lg px-5" (click)="crearPedido()">{{textoBoton}}</button>
+          @if(this.idPedidoAEditar === null){
+            <button class="btn btn-success btn-lg px-5" (click)="crearPedido()">Crear Pedido</button>
+          } @else {
+            <button class="btn btn-success btn-lg px-5" (click)="guardarCambiosEdicion()">Guardar Cambios</button>
+          }
         </div>
       </div>
 

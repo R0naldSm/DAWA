@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, ɵInternalFormsSharedModule } from '@angular/forms';
 import { SelectorProveedores } from './selector-proveedores/selector-proveedores';
 import { ProveedorService } from '../../../../services/proveedorService';
@@ -16,8 +16,18 @@ export class FormDatosBasicos {
   buscarTexto: string = '';
   verInactivos: boolean = false;
 
+  constructor() {
+    effect(() => {
+      this.obtenerProveedores()
+      const id = this.proveedorCargado();
+      if (id) {
+        this.proveedorSeleccionadoId = id;
+      }
+    });
+  }
+
   ngOnInit() {
-    this.obtenerProveedores()
+    
   }
   // servicio de proveedores
   servicioProveedores = inject(ProveedorService)
@@ -25,8 +35,10 @@ export class FormDatosBasicos {
   formDatosBasicos = input.required<FormGroup>()
   // proveedor seleccionado
   proveedorSeleccionado = output<number>()
+  proveedorCargado = input<number>()
   // propiedades
   proveedores: any[] = []
+  proveedorSeleccionadoId: number = 0;
 
   // metodo para obtener los nombres de los proveedores
   obtenerProveedores() {

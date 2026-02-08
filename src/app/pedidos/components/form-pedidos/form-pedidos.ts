@@ -19,14 +19,18 @@ export class NuevoPedido {
     this.rutaActiva.params.subscribe(params => {
       if (params['id']) {
         this.titulo = 'Editar Pedido';
-        this.textoBoton = 'Guardar Cambios';
+        this.idPedidoAEditar = +params['id'];
+
+        this.cargarDatosPedidoAEditar();
       }
     });
   }
 
-  // variables de clase (textos dinamicos)
+  // variables de clase
   titulo: string = 'Crear Nuevo Pedido';
-  textoBoton: string = 'Crear Pedido';
+  idPedidoAEditar: number | null = null;
+  proveedorCargado: number = 0;
+  productosTabla: any[] = [];
 
   // servicos e inyecciones
   rutaActiva = inject(ActivatedRoute)
@@ -64,28 +68,10 @@ export class NuevoPedido {
 
   crearPedido() {
     const pedidoFrom = this.formPedido.value;
-
-    if (!pedidoFrom.datosBasicos?.proveedor || pedidoFrom.datosBasicos?.proveedor === 0) {
-      alert('Debes seleccionar un proveedor');
+    
+    if(!this.validarDatos(pedidoFrom)){
       return;
     }
-
-    // 2. Validar productos
-    if (!pedidoFrom.productos || pedidoFrom.productos.length === 0) {
-      alert('Debes agregar al menos un producto');
-      return;
-    }
-
-    // 3. Validar fecha
-    const dia = pedidoFrom.datosBasicos.dia;
-    const mes = pedidoFrom.datosBasicos.mes;
-    const anio = pedidoFrom.datosBasicos.anio;
-
-    if (!dia || !mes || !anio) {
-      alert('Debes seleccionar una fecha completa (día, mes, año)');
-      return;
-    }
-
 
     this.pedidoService.crearPedido(pedidoFrom).subscribe({
       next: (response) => {
@@ -153,5 +139,94 @@ export class NuevoPedido {
   limpiarProductos() {
     const productosFormArray = this.formPedido.get('productos') as FormArray;
     productosFormArray.clear();
+  }
+
+  // metodos de edicion de pedido
+  cargarDatosPedidoAEditar() {
+    if (this.idPedidoAEditar) {
+      this.pedidoService.getDetallesByPedido(this.idPedidoAEditar).subscribe({
+        next: (respuesta) => {
+          
+          const pedido = respuesta.data;
+          this.proveedorCargado = pedido.idProveedor;
+
+          this.datosBasicosForm.patchValue({
+            proveedor: pedido.idProveedor,
+            dia: pedido.dia,
+            mes: pedido.mes,
+            anio: pedido.ano,
+            observaciones: pedido.observaciones
+          });
+
+          this.formPedido.get('total')?.setValue(pedido.total);
+
+          const productosFormArray = this.formPedido.get('productos') as FormArray;
+          pedido.detalles.forEach((detalle: any) => {
+            productosFormArray.push(this.fb.group({
+              id: [detalle.idProducto],
+              cantidad: [detalle.cantidad],
+              precioUnitario: [detalle.precioUnitario]
+            }));
+
+            this.productosTabla.push({
+              id: detalle.idProducto,
+              cantidad: detalle.cantidad
+            });
+          });
+
+        },
+        error: (error) => {
+          console.error('Error al cargar los detalles del pedido:', error);
+        }
+      });
+    }
+  }
+
+  guardarCambiosEdicion() {
+    const pedidoFrom = this.formPedido.value;
+
+    if(!this.validarDatos(pedidoFrom)){
+      return;
+    }
+
+    this.pedidoService.actualizarPedido(pedidoFrom, this.idPedidoAEditar!).subscribe({
+      next: (response) => {
+        alert('Pedido actualizado exitosamente');
+        console.log('Respuesta del servidor:', response);
+        this.formPedido.reset();
+
+        setTimeout(() => {
+          this.router.navigate(['/pedidos']);
+        }, 1000);
+      },
+      error: (error) => {
+        alert('Error al actualizar el pedido: ' + error.message);
+      }
+    });
+  }
+
+  validarDatos(pedidoFrom: any): boolean {
+    if (!pedidoFrom.datosBasicos?.proveedor || pedidoFrom.datosBasicos?.proveedor === 0) {
+      alert('Debes seleccionar un proveedor');
+      return false;
+    }
+
+    // 2. Validar productos
+    if (!pedidoFrom.productos || pedidoFrom.productos.length === 0) {
+      alert('Debes agregar al menos un producto');
+      return false;
+    }
+
+    // 3. Validar fecha
+    const dia = pedidoFrom.datosBasicos.dia;
+    const mes = pedidoFrom.datosBasicos.mes;
+    const anio = pedidoFrom.datosBasicos.anio;
+
+    if (!dia || !mes || !anio) {
+      alert('Debes seleccionar una fecha completa (día, mes, año)');
+      return false;
+    }
+
+    return true;
   }
 }

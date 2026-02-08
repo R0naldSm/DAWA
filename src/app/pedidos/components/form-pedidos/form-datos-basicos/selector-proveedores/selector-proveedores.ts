@@ -1,6 +1,5 @@
-import { Component, inject, input, output } from '@angular/core';
-import { FormGroup, FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { Proveedor } from '../../../../../interfaces/proveedor';
+import { Component, effect, inject, input, output } from '@angular/core';
+import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-selector-proveedores',
@@ -9,6 +8,17 @@ import { Proveedor } from '../../../../../interfaces/proveedor';
   styleUrl: './selector-proveedores.css',
 })
 export class SelectorProveedores {
+
+  constructor() {
+    effect(() => {
+      const id = this.proveedorCargado();
+      const nombreProveedor = this.listaProveedores().find(p => p.id === id)?.nombre || '';
+      this.formSelectorProveedor.patchValue({
+        nombreProveedor: nombreProveedor
+      })
+    })
+  }
+
   fb = inject(NonNullableFormBuilder)
   formSelectorProveedor = this.fb.group({
     nombreProveedor: ['']
@@ -16,6 +26,7 @@ export class SelectorProveedores {
 
   // datos (nombres de proveedores)
   listaProveedores = input.required<any[]>()
+  proveedorCargado = input<number>()
   // emitir id del proveedor seleccionado
   proveedorSeleccionado = output<number>()
   // estado de la lista (mostrar/ocultar)

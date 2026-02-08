@@ -17,10 +17,10 @@ export class FormProductosPedidos {
   constructor() {
     // Detectar cambios en el input
     effect(() => {
-      this.idProveedorSeleccionado();
-      this.productosTabla = [];
-      this.obtenerProductosProveedor();
-      this.actualizarEstadoBoton();
+      if (this.idProveedorSeleccionado()) {
+        this.obtenerProductosProveedor();
+        this.actualizarEstadoBoton();
+      }
     });
   }
 
@@ -38,6 +38,7 @@ export class FormProductosPedidos {
 
   // inputs y outputs
   idProveedorSeleccionado = input.required<number>()
+  cargarProductosTabla = input<any[]>()
   emitirProducto = output<IProductoPedido>()
   IdProductoEliminado = output<number>();
 
@@ -91,6 +92,13 @@ export class FormProductosPedidos {
         }));
 
         this.productos = productosBD.filter((p: any) => p.idProveedor === this.idProveedorSeleccionado());
+        
+        const productosACargar = this.cargarProductosTabla() || [];
+        if (productosACargar.length > 0) {
+          productosACargar.forEach((producto) => {
+            this.agregarATabla(producto.id, producto.cantidad);
+          });
+        }
       },
       error: (error) => {
         console.error('Error al obtener productos:', error);
@@ -104,7 +112,6 @@ export class FormProductosPedidos {
   }
 
   agregarATabla(idProducto: number, cantidad: number) {
-
     if(this.productosTabla.find(p => p.id === idProducto)){
       return;
     }
@@ -112,9 +119,9 @@ export class FormProductosPedidos {
     if (cantidad <= 0) {
       return;
     }
-
+    
     let producto = this.productos.find(p => p.id === idProducto);
-
+    
     if (producto) {
       this.productosTabla.push({
         id: producto.id ?? 0,

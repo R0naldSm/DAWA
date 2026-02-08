@@ -68,4 +68,27 @@ export class PedidoService {
 
     return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
   }
+
+  actualizarPedido(pedido: any, idPedido: number) {
+    const datosBasicos = pedido.datosBasicos;
+    const productos = pedido.productos;
+    const detalles = productos.map((p: any) => ({
+      IdProducto: parseInt(p.IdProducto) || parseInt(p.id),
+      Cantidad: parseInt(p.Cantidad) || parseInt(p.cantidad),
+      PrecioUnitario: parseFloat(p.PrecioUnitario) || parseFloat(p.precioUnitario)
+    }));
+
+    const body = {
+      "transaccion": "ACTUALIZAR_PEDIDO",
+      "idPedido": idPedido,
+      "idProveedor": datosBasicos.proveedor,
+      "dia": datosBasicos.dia,
+      "mes": datosBasicos.mes,
+      "ano": datosBasicos.anio,
+      "observaciones": datosBasicos.observaciones || '',
+      "detalles": detalles
+    }
+
+    return this.http.post(`${this.apiUrl}/GestionarPedido`, body, this.getHeaders());
+  }
 }

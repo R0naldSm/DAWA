@@ -10,7 +10,7 @@
                 <!-- Proveedor -->
                 <div class="col-md-6">
                     <label for="proveedor" class="form-label">Proveedor</label>
-                    <app-selector-proveedores [listaProveedores]="proveedores"(proveedorSeleccionado)="ProveedorSeleccionado($event)"/>
+                    <app-selector-proveedores [listaProveedores]="proveedores"(proveedorSeleccionado)="ProveedorSeleccionado($event)" [proveedorCargado]="proveedorSeleccionadoId"/>
                 </div>
 
                 <!-- Fecha de entrega estimada -->
