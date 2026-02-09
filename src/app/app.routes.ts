@@ -41,7 +41,7 @@ export const routes: Routes = [
   },
   {
     path: 'pagos',
-    loadComponent: () => import('./components/pagos/pagos').then(m => m.Pagos)
+    loadComponent: () => import('./components/pagos/pagos').then(m => m.PagosComponent)
   },
   {
     path: 'dashboard',

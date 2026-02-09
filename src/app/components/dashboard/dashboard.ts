@@ -1,28 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardService } from './../../services/dashboardServices';
-
-interface Estadistica {
-  titulo: string;
-  valor: number | string;
-  icono: string;
-  color: string;
-  cambio?: string;
-}
-
-interface Pedido {
-  id: number;
-  producto: string;
-  proveedor: string;
-  estado: string;
-  fecha: string;
-}
-
-interface Producto {
-  nombre: string;
-  cantidad: number;
-  color: string;
-}
+import { Router } from '@angular/router';
+import { DashboardService } from '../../services/dashboardServices';
+import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,13 +11,65 @@ interface Producto {
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class Dashboard implements OnInit {
-  estadisticas: Estadistica[] = [];
-  pedidosRecientes: Pedido[] = [];
-  productosPopulares: Producto[] = [];
-  ventasMensuales: any[] = [];
+export class DashboardComponent implements OnInit {
+  private dashboardService = inject(DashboardService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
+  // Datos del dashboard
+  estadisticas: any = {};
+  pedidosRecientes: any[] = [];
+  productosPopulares: any[] = [];
+  ventasMensuales: any[] = []; 
+
+  // Estados de carga
+  cargandoEstadisticas: boolean = true;
+  cargandoPedidos: boolean = true;
+  cargandoProductos: boolean = true;
+  cargandoVentas: boolean = true;
+
+  // Error handling
+  errorEstadisticas: string | null = null;
+  errorPedidos: string | null = null;
+  errorProductos: string | null = null;
+  errorVentas: string | null = null;
+
+  // Información del usuario
+  nombreUsuario: string = '';
+  fechaActual: string = '';
 
   ngOnInit() {
+    this.inicializarDashboard();
+  }
+
+  inicializarDashboard() {
+    // Configurar fecha actual
+    this.fechaActual = new Date().toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    // Obtener usuario actual
+    this.auth.usuarioActual$.subscribe({
+      next: (user) => {
+        if (user) {
+          this.nombreUsuario = user.Nombres || user.nombre || user.email || 'Usuario';
+          this.cargarTodosLosDatos();
+        } else {
+          console.error('❌ No hay usuario autenticado');
+          this.router.navigate(['/']);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error obteniendo usuario:', error);
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
+  cargarTodosLosDatos() {
     this.cargarEstadisticas();
     this.cargarPedidosRecientes();
     this.cargarProductosPopulares();
@@ -45,133 +77,167 @@ export class Dashboard implements OnInit {
   }
 
   cargarEstadisticas() {
-    this.estadisticas = [
-      {
-        titulo: 'Total Proveedores',
-        valor: 24,
-        icono: 'bi-people-fill',
-        color: 'primary',
-        cambio: '+3 este mes'
+    this.cargandoEstadisticas = true;
+    this.errorEstadisticas = null;
+
+    this.dashboardService.obtenerEstadisticas().subscribe({
+      next: (data) => {
+        this.estadisticas = data;
+        this.cargandoEstadisticas = false;
+        console.log('✅ Estadísticas cargadas:', data);
       },
-      {
-        titulo: 'Productos Activos',
-        valor: 156,
-        icono: 'bi-box-seam',
-        color: 'success',
-        cambio: '+12 nuevos'
-      },
-      {
-        titulo: 'Pedidos Pendientes',
-        valor: 8,
-        icono: 'bi-cart-check',
-        color: 'warning',
-        cambio: '3 urgentes'
-      },
-      {
-        titulo: 'Ventas del Mes',
-        valor: '$45,280',
-        icono: 'bi-graph-up-arrow',
-        color: 'info',
-        cambio: '+18% vs mes anterior'
-      },
-      {
-        titulo: 'Entregas Completadas',
-        valor: 142,
-        icono: 'bi-truck',
-        color: 'success',
-        cambio: '98% a tiempo'
-      },
-      {
-        titulo: 'Pagos Pendientes',
-        valor: '$8,450',
-        icono: 'bi-cash-stack',
-        color: 'danger',
-        cambio: '5 facturas'
+      error: (error) => {
+        console.error('❌ Error cargando estadísticas:', error);
+        this.errorEstadisticas = 'No se pudieron cargar las estadísticas';
+        this.cargandoEstadisticas = false;
+        
+        // Datos de ejemplo para desarrollo
+        if (error.status === 0 || error.status === 404) {
+          this.estadisticas = {
+            totalVentas: 125000,
+            totalPedidos: 45,
+            totalClientes: 28,
+            totalProductos: 156,
+            ventasMensuales: 45000,
+            pedidosPendientes: 12
+          };
+          this.cargandoEstadisticas = false;
+        }
       }
-    ];
+    });
   }
 
   cargarPedidosRecientes() {
-    this.pedidosRecientes = [
-      {
-        id: 1001,
-        producto: 'Semillas de Maíz Premium',
-        proveedor: 'AgroSemillas del Ecuador',
-        estado: 'En Tránsito',
-        fecha: '2025-11-16'
+    this.cargandoPedidos = true;
+    this.errorPedidos = null;
+
+    this.dashboardService.obtenerPedidosRecientes().subscribe({
+      next: (data) => {
+        this.pedidosRecientes = data.slice(0, 5); // Solo los 5 más recientes
+        this.cargandoPedidos = false;
+        console.log('✅ Pedidos recientes cargados:', data.length);
       },
-      {
-        id: 1002,
-        producto: 'Fertilizante Orgánico 50kg',
-        proveedor: 'Fertilizantes La Costa',
-        estado: 'Pendiente',
-        fecha: '2025-11-17'
-      },
-      {
-        id: 1003,
-        producto: 'Pesticida Natural 20L',
-        proveedor: 'Pesticidas Naturales SA',
-        estado: 'Completado',
-        fecha: '2025-11-15'
-      },
-      {
-        id: 1004,
-        producto: 'Sistema de Riego por Goteo',
-        proveedor: 'Herramientas Agrícolas',
-        estado: 'En Tránsito',
-        fecha: '2025-11-16'
-      },
-      {
-        id: 1005,
-        producto: 'Semillas de Arroz',
-        proveedor: 'AgroSemillas del Ecuador',
-        estado: 'Pendiente',
-        fecha: '2025-11-17'
+      error: (error) => {
+        console.error('❌ Error cargando pedidos recientes:', error);
+        this.errorPedidos = 'No se pudieron cargar los pedidos recientes';
+        this.cargandoPedidos = false;
+        
+        // Datos de ejemplo para desarrollo
+        if (error.status === 0 || error.status === 404) {
+          this.pedidosRecientes = [
+            { idPedido: 1, numeroPedido: 'PED-001', cliente: 'Juan Pérez', fecha: '2024-01-15', estado: 'Completado', total: 2500 },
+            { idPedido: 2, numeroPedido: 'PED-002', cliente: 'María García', fecha: '2024-01-14', estado: 'En proceso', total: 1800 },
+            { idPedido: 3, numeroPedido: 'PED-003', cliente: 'Carlos López', fecha: '2024-01-13', estado: 'Pendiente', total: 3200 }
+          ];
+          this.cargandoPedidos = false;
+        }
       }
-    ];
+    });
   }
 
   cargarProductosPopulares() {
-    this.productosPopulares = [
-      { nombre: 'Semillas', cantidad: 45, color: 'success' },
-      { nombre: 'Fertilizantes', cantidad: 38, color: 'primary' },
-      { nombre: 'Pesticidas', cantidad: 32, color: 'warning' },
-      { nombre: 'Herramientas', cantidad: 25, color: 'info' },
-      { nombre: 'Equipos de Riego', cantidad: 16, color: 'secondary' }
-    ];
+    this.cargandoProductos = true;
+    this.errorProductos = null;
+
+    this.dashboardService.obtenerProductosPopulares().subscribe({
+      next: (data) => {
+        this.productosPopulares = data.slice(0, 5); // Solo los 5 más populares
+        this.cargandoProductos = false;
+        console.log('✅ Productos populares cargados:', data.length);
+      },
+      error: (error) => {
+        console.error('❌ Error cargando productos populares:', error);
+        this.errorProductos = 'No se pudieron cargar los productos populares';
+        this.cargandoProductos = false;
+        
+        // Datos de ejemplo para desarrollo
+        if (error.status === 0 || error.status === 404) {
+          this.productosPopulares = [
+            { idProducto: 1, nombre: 'Maíz Premium', categoria: 'Granos', cantidadVendida: 150, totalVentas: 45000 },
+            { idProducto: 2, nombre: 'Fertilizante Orgánico', categoria: 'Insumos', cantidadVendida: 85, totalVentas: 25500 },
+            { idProducto: 3, nombre: 'Semillas de Soya', categoria: 'Semillas', cantidadVendida: 120, totalVentas: 36000 }
+          ];
+          this.cargandoProductos = false;
+        }
+      }
+    });
   }
 
   cargarVentasMensuales() {
-    this.ventasMensuales = [
-      { mes: 'Jun', ventas: 28500 },
-      { mes: 'Jul', ventas: 32800 },
-      { mes: 'Ago', ventas: 35200 },
-      { mes: 'Sep', ventas: 38900 },
-      { mes: 'Oct', ventas: 42100 },
-      { mes: 'Nov', ventas: 45280 }
-    ];
+    this.cargandoVentas = true;
+    this.errorVentas = null;
+
+    this.dashboardService.obtenerVentasMensuales().subscribe({
+      next: (data) => {
+        this.ventasMensuales = data.slice(0, 6); // Últimos 6 meses
+        this.cargandoVentas = false;
+        console.log('✅ Ventas mensuales cargadas:', data.length);
+      },
+      error: (error) => {
+        console.error('❌ Error cargando ventas mensuales:', error);
+        this.errorVentas = 'No se pudieron cargar las ventas mensuales';
+        this.cargandoVentas = false;
+        
+        // Datos de ejemplo para desarrollo
+        if (error.status === 0 || error.status === 404) {
+          const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];
+          this.ventasMensuales = meses.map((mes, index) => ({
+            mes: mes,
+            anio: 2024,
+            totalVentas: Math.floor(Math.random() * 50000) + 20000,
+            cantidadPedidos: Math.floor(Math.random() * 30) + 10
+          }));
+          this.cargandoVentas = false;
+        }
+      }
+    });
   }
 
-  getEstadoClass(estado: string): string {
-    const clases: any = {
-      'Completado': 'badge bg-success',
-      'En Tránsito': 'badge bg-primary',
-      'Pendiente': 'badge bg-warning text-dark',
-      'Cancelado': 'badge bg-danger'
-    };
-    return clases[estado] || 'badge bg-secondary';
+  // Métodos auxiliares para la vista
+  formatoMoneda(valor: number): string {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN'
+    }).format(valor || 0);
   }
 
-  getPorcentajeProducto(cantidad: number): number {
-    const max = Math.max(...this.productosPopulares.map(p => p.cantidad));
-    return (cantidad / max) * 100;
+  formatoNumero(valor: number): string {
+    return valor?.toLocaleString('es-MX') || '0';
   }
 
-  getMaxVentas(): number {
-    return Math.max(...this.ventasMensuales.map(v => v.ventas));
+  formatoFecha(fecha: string): string {
+    if (!fecha) return '';
+    return new Date(fecha).toLocaleDateString('es-MX');
   }
 
-  getAlturaGrafico(ventas: number): number {
-    return (ventas / this.getMaxVentas()) * 100;
+  getColorEstado(estado: string): string {
+    switch(estado?.toLowerCase()) {
+      case 'completado': return 'bg-green-100 text-green-800';
+      case 'en proceso': return 'bg-yellow-100 text-yellow-800';
+      case 'pendiente': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  }
+
+  // Navegación
+  navegarAPedidos() {
+    this.router.navigate(['/pedidos']);
+  }
+
+  navegarAProductos() {
+    this.router.navigate(['/productos']);
+  }
+
+  navegarAPagos() {
+    this.router.navigate(['/pagos']);
+  }
+
+  navegarAProveedores() {
+    this.router.navigate(['/proveedores']);
+  }
+
+  // Recargar datos
+  recargarDashboard() {
+    this.cargarTodosLosDatos();
   }
 }

@@ -1,17 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PagosService } from './../../services/pagosService';
+import { PagosService, Pago, ResumenPagos } from './../../services/pagosService';
+import { AuthService } from './../../services/auth';
+import { ProveedorService } from './../../services/proveedorService';
 
-interface Pago {
-  id: number;
-  proveedor: string;
-  monto: number;
-  fecha: string;
-  estado: 'Pendiente' | 'Pagado' | 'Vencido';
-  concepto: string;
-  metodoPago?: string;
-}
 
 @Component({
   selector: 'app-pagos',
@@ -20,144 +13,233 @@ interface Pago {
   templateUrl: './pagos.html',
   styleUrls: ['./pagos.css']
 })
-export class Pagos implements OnInit {
+export class PagosComponent implements OnInit {
+  // Datos para la tabla
   pagos: Pago[] = [];
   pagosFiltrados: Pago[] = [];
-  filtroEstado: string = 'Todos';
+  
+  // Filtros
+  filtroEstado: string = '';
   busqueda: string = '';
-
-  // Datos para nuevo pago
-  nuevoPago: Pago = {
-    id: 0,
-    proveedor: '',
-    monto: 0,
-    fecha: '',
-    estado: 'Pendiente',
-    concepto: '',
-    metodoPago: ''
+  
+  // Resumen
+  resumen: ResumenPagos = {
+    totalPagado: 0,
+    pendiente: 0,
+    vencido: 0,
+    total: 0
   };
-
-  mostrarModal: boolean = false;
-
-  ngOnInit() {
+  
+  // Estados para el filtro
+  estados = [
+    { valor: '', texto: 'Todos los estados' },
+    { valor: 'Pagado', texto: 'Pagado' },
+    { valor: 'Pendiente', texto: 'Pendiente' },
+    { valor: 'Vencido', texto: 'Vencido' }
+  ];
+  
+  // Loading
+  cargando: boolean = false;
+  errorCarga: string | null = null;
+  
+  // Usuario autenticado
+  usuario: any = null;
+  
+  constructor(
+    private pagosService: PagosService,
+    private authService: AuthService
+  ) { }
+  
+  ngOnInit(): void {
+    // Verificar autenticación
+    this.usuario = this.authService.getCurrentUser();
+    if (!this.usuario) {
+      this.errorCarga = 'No estás autenticado';
+      return;
+    }
+    
+    this.cargarDatos();
+  }
+  
+  cargarDatos(): void {
     this.cargarPagos();
-    this.aplicarFiltros();
+    this.cargarResumen();
   }
-
-  cargarPagos() {
-    // Datos quemados (mock data)
-    this.pagos = [
-      {
-        id: 1,
-        proveedor: 'AgroSemillas del Ecuador',
-        monto: 2500.00,
-        fecha: '2025-11-10',
-        estado: 'Pagado',
-        concepto: 'Compra de semillas de maíz',
-        metodoPago: 'Transferencia'
-      },
-      {
-        id: 2,
-        proveedor: 'Fertilizantes La Costa',
-        monto: 1800.50,
-        fecha: '2025-11-15',
-        estado: 'Pendiente',
-        concepto: 'Fertilizantes orgánicos',
-        metodoPago: ''
-      },
-      {
-        id: 3,
-        proveedor: 'Pesticidas Naturales SA',
-        monto: 950.00,
-        fecha: '2025-11-05',
-        estado: 'Vencido',
-        concepto: 'Productos fitosanitarios',
-        metodoPago: ''
-      },
-      {
-        id: 4,
-        proveedor: 'Herramientas Agrícolas',
-        monto: 3200.00,
-        fecha: '2025-11-12',
-        estado: 'Pagado',
-        concepto: 'Equipos de riego',
-        metodoPago: 'Cheque'
-      },
-      {
-        id: 5,
-        proveedor: 'AgroSemillas del Ecuador',
-        monto: 1500.00,
-        fecha: '2025-11-18',
-        estado: 'Pendiente',
-        concepto: 'Semillas de arroz',
-        metodoPago: ''
-      }
-    ];
+  
+  cargarPagos(): void {
+    this.cargando = true;
+    this.errorCarga = null;
+    
+    this.pagosService.getPagos(this.filtroEstado, this.busqueda)
+      .subscribe({
+        next: (data) => {
+          this.pagos = data;
+          this.pagosFiltrados = data;
+          this.cargando = false;
+          console.log('Pagos cargados:', data.length);
+        },
+        error: (error) => {
+          console.error('Error al cargar pagos:', error);
+          this.errorCarga = 'Error al cargar los pagos. Verifica la conexión.';
+          this.cargando = false;
+        }
+      });
   }
-
-  aplicarFiltros() {
-    this.pagosFiltrados = this.pagos.filter(pago => {
-      const cumpleFiltroEstado = this.filtroEstado === 'Todos' || pago.estado === this.filtroEstado;
-      const cumpleBusqueda = pago.proveedor.toLowerCase().includes(this.busqueda.toLowerCase()) ||
-                            pago.concepto.toLowerCase().includes(this.busqueda.toLowerCase());
-      return cumpleFiltroEstado && cumpleBusqueda;
+  
+  cargarResumen(): void {
+    this.pagosService.getResumenPagos()
+      .subscribe({
+        next: (data) => {
+          this.resumen = data;
+        },
+        error: (error) => {
+          console.error('Error al cargar resumen:', error);
+        }
+      });
+  }
+  
+  aplicarFiltros(): void {
+    console.log('Aplicando filtros:', {
+      estado: this.filtroEstado,
+      busqueda: this.busqueda
     });
+    this.cargarPagos();
   }
-
-  getEstadoClass(estado: string): string {
-    switch(estado) {
-      case 'Pagado': return 'badge bg-success';
-      case 'Pendiente': return 'badge bg-warning text-dark';
-      case 'Vencido': return 'badge bg-danger';
-      default: return 'badge bg-secondary';
+  
+  limpiarFiltros(): void {
+    this.filtroEstado = '';
+    this.busqueda = '';
+    this.cargarPagos();
+  }
+  
+  // Acciones
+  verDetalle(pago: Pago): void {
+    console.log('Ver detalle:', pago);
+    // Aquí puedes implementar un modal o navegación
+  }
+  
+  editarPago(pago: Pago): void {
+    console.log('Editar pago:', pago);
+    // Implementar lógica de edición (modal o nueva ruta)
+  }
+  
+  eliminarPago(id?: number): void {
+    if (!id) return;
+    if (confirm('¿Estás seguro de eliminar este pago?')) {
+      this.pagosService.eliminarPago(id)
+        .subscribe({
+          next: () => {
+            alert('Pago eliminado correctamente');
+            this.cargarDatos();
+          },
+          error: (error) => {
+            console.error('Error al eliminar pago:', error);
+            alert('Error al eliminar el pago');
+          }
+        });
     }
   }
+  
+  marcarComoPagado(pagoOrId: any): void {
+    const id = typeof pagoOrId === 'number' ? pagoOrId : (pagoOrId.idPago || pagoOrId.id);
+    if (!id) return;
 
-  getTotalPagos(): number {
-    return this.pagosFiltrados.reduce((sum, pago) => sum + pago.monto, 0);
+    this.pagosService.marcarComoPagado(id)
+      .subscribe({
+        next: () => {
+          alert('Pago marcado como pagado');
+          this.cargarDatos();
+        },
+        error: (error) => {
+          console.error('Error al marcar como pagado:', error);
+          alert('Error al actualizar el estado');
+        }
+      });
   }
 
-  getTotalPorEstado(estado: string): number {
-    return this.pagos
-      .filter(p => p.estado === estado)
-      .reduce((sum, pago) => sum + pago.monto, 0);
-  }
+  // Modal / crear pago
+  mostrarModal: boolean = false;
+  nuevoPago: any = {
+    proveedor: '',
+    concepto: '',
+    monto: 0,
+    fecha: new Date().toISOString().split('T')[0],
+    estado: 'Pendiente',
+    metodoPago: '',
+    numeroTransaccion: ''
+  };
 
-  abrirModal() {
+  abrirModal(): void {
     this.mostrarModal = true;
-    this.nuevoPago = {
-      id: this.pagos.length + 1,
-      proveedor: '',
-      monto: 0,
-      fecha: '',
-      estado: 'Pendiente',
-      concepto: '',
-      metodoPago: ''
-    };
+    this.nuevoPago = { proveedor: '', concepto: '', monto: 0, fecha: new Date().toISOString().split('T')[0], estado: 'Pendiente', metodoPago: '', numeroTransaccion: '' };
   }
 
-  cerrarModal() {
+  cerrarModal(): void {
     this.mostrarModal = false;
   }
 
-  guardarPago() {
-    if (this.nuevoPago.proveedor && this.nuevoPago.monto > 0 && this.nuevoPago.fecha) {
-      this.pagos.unshift({...this.nuevoPago});
-      this.aplicarFiltros();
-      this.cerrarModal();
+  guardarPago(): void {
+    const payload: Pago = {
+      idProveedor: 0,
+      monto: Number(this.nuevoPago.monto) || 0,
+      fecha: this.nuevoPago.fecha,
+      estado: this.nuevoPago.estado,
+      concepto: this.nuevoPago.concepto,
+      metodoPago: this.nuevoPago.metodoPago || '',
+      numeroTransaccion: this.nuevoPago.numeroTransaccion || ''
+    } as Pago;
+
+    this.pagosService.crearPago(payload).subscribe({
+      next: () => {
+        alert('Pago creado correctamente');
+        this.cargarDatos();
+        this.cerrarModal();
+      },
+      error: (err) => {
+        console.error('Error creando pago:', err);
+        alert('Error creando pago');
+      }
+    });
+  }
+  
+  // Formatear moneda
+  formatoMoneda(valor: number): string {
+    return new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN'
+    }).format(valor);
+  }
+  
+  // Formatear fecha
+  formatoFecha(fecha: string): string {
+    if (!fecha) return 'N/A';
+    try {
+      const date = new Date(fecha);
+      return date.toLocaleDateString('es-MX');
+    } catch {
+      return fecha;
+    }
+  }
+  
+  // Obtener clase CSS para el estado
+  getClaseEstado(estado: string): string {
+    switch(estado?.toLowerCase()) {
+      case 'pagado': return 'estado-pagado';
+      case 'pendiente': return 'estado-pendiente';
+      case 'vencido': return 'estado-vencido';
+      default: return 'estado-default';
     }
   }
 
-  marcarComoPagado(pago: Pago) {
-    pago.estado = 'Pagado';
-    pago.metodoPago = 'Transferencia';
-    this.aplicarFiltros();
+  // Compatibilidad con la plantilla (nombre usado en HTML)
+  getEstadoClass(estado: string): string { return this.getClaseEstado(estado); }
+
+  // Totales y utilidades usadas por la plantilla
+  getTotalPorEstado(estado: string): number {
+    return this.pagos.reduce((sum, p) => sum + ((p.estado === estado) ? p.monto : 0), 0);
   }
 
-  eliminarPago(id: number) {
-    if (confirm('¿Está seguro de eliminar este pago?')) {
-      this.pagos = this.pagos.filter(p => p.id !== id);
-      this.aplicarFiltros();
-    }
+  getTotalPagos(): number {
+    return this.pagos.reduce((sum, p) => sum + p.monto, 0);
   }
 }

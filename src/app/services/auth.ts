@@ -77,6 +77,11 @@ export class AuthService {
   abrirLogin() { this.mostrarLoginModal.next(true); }
   cerrarLogin() { this.mostrarLoginModal.next(false); }
 
+  // Devuelve el usuario actual (sincrónico)
+  getCurrentUser(): any {
+    return this.usuarioActualSubject.value;
+  }
+
   existeUsuario(u: string): boolean { return true; }
 
   actualizarClave(usuario: string, nuevaClave: string): Observable<any> {
