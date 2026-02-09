@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { ProductoService } from '../../../services/productoService';
-import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Producto } from '../../../interfaces/productos';
 
 @Component({
   selector: 'app-productos-list',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './productos-list.component.html',
 })
 export default class ProductosList {
@@ -20,12 +20,15 @@ export default class ProductosList {
   });
 
   pagina: number = 1;
+  verInactivos: boolean = false;
 
   cargando = false;
   error: string | null = null;
 
   private productosAll: Producto[] = [];
   private productosFiltrados: Producto[] = [];
+  productosActivos: Producto[] = [];
+  productosInactivos: Producto[] = [];
 
   ngOnInit() {
     this.cargarProductos();
@@ -38,7 +41,7 @@ export default class ProductosList {
   private cargarProductos() {
     this.cargando = true;
     this.error = null;
-    this.productoService.getProductos().subscribe({
+    this.productoService.getProductos(undefined, true).subscribe({
       next: (rows) => {
         this.productosAll = rows;
         this.aplicarFiltro();
@@ -57,31 +60,37 @@ export default class ProductosList {
     const proveedor = (this.formBusqueda.value.proveedor || '').trim();
     if (proveedor === '') {
       this.productosFiltrados = this.productosAll;
+      this.actualizarSecciones();
+      this.pagina = 1;
       return;
     }
 
     const id = Number(proveedor);
     if (!isNaN(id) && id > 0) {
       this.productosFiltrados = this.productosAll.filter((p) => p.proveedorId === id);
+      this.actualizarSecciones();
+      this.pagina = 1;
       return;
     }
 
     const q = proveedor.toLowerCase();
     this.productosFiltrados = this.productosAll.filter((p) => (p.nombre || '').toLowerCase().includes(q));
+    this.actualizarSecciones();
+    this.pagina = 1;
   }
 
   listaProductos(page: number): Producto[] {
     const inicio = (page - 1) * 10;
-    return this.productosFiltrados.slice(inicio, inicio + 10);
+    return this.listaActual().slice(inicio, inicio + 10);
   }
 
   // method used by the template `@for` loop in other components
   productos(): Producto[] {
-    return this.productosFiltrados;
+    return this.listaActual();
   }
 
   totalPaginas(): number {
-    return Math.max(1, Math.ceil(this.productosFiltrados.length / 10));
+    return Math.max(1, Math.ceil(this.listaActual().length / 10));
   }
 
   irCrear() {
@@ -108,8 +117,7 @@ export default class ProductosList {
 
     this.productoService.delete(productoEliminar).subscribe({
       next: () => {
-        // Filtrar el producto de la lista en memoria
-        this.productosAll = this.productosAll.filter((p) => p.id !== id);
+        this.productosAll = this.productosAll.map((p) => (p.id === id ? productoEliminar : p));
         this.aplicarFiltro();
         alert('Producto eliminado exitosamente.');
       },
@@ -127,21 +135,21 @@ export default class ProductosList {
     });
   }
 
-  toggle(id?: number) {
+  activar(id?: number) {
     if (!id) return;
-    const p = this.productosAll.find((x) => x.id === id);
-    if (!p) return;
+    const producto = this.productosAll.find((p) => p.id === id);
+    if (!producto) {
+      alert('Producto no encontrado.');
+      return;
+    }
 
-    const actualizado: Producto = {
-      ...p,
-      disponible: !p.disponible
-    };
+    const productoActivar: Producto = { ...producto, estado: 'A' };
 
-    this.productoService.update(actualizado).subscribe({
+    this.productoService.update(productoActivar).subscribe({
       next: () => {
-        this.productosAll = this.productosAll.map((x) => (x.id === id ? actualizado : x));
+        this.productosAll = this.productosAll.map((p) => (p.id === id ? productoActivar : p));
         this.aplicarFiltro();
-        alert(`Producto ${actualizado.disponible ? 'activado' : 'desactivado'} exitosamente.`);
+        alert('Producto activado exitosamente.');
       },
       error: (err) => {
         console.error(err);
@@ -152,7 +160,7 @@ export default class ProductosList {
           (typeof err?.error === 'string' ? err.error : null) ??
           err?.message ??
           null;
-        alert(backendMsg ? String(backendMsg) : 'No se pudo actualizar la disponibilidad.');
+        alert(backendMsg ? String(backendMsg) : 'No se pudo activar el producto.');
       },
     });
   }
@@ -163,6 +171,20 @@ export default class ProductosList {
 
   siguiente() {
     this.pagina = Math.min(this.totalPaginas(), this.pagina + 1);
+  }
+
+  toggleVista() {
+    this.pagina = 1;
+  }
+
+  private listaActual(): Producto[] {
+    return this.verInactivos ? this.productosInactivos : this.productosActivos;
+  }
+
+  private actualizarSecciones() {
+    const esInactivo = (p: Producto) => (p.estado || '').toUpperCase() === 'I';
+    this.productosInactivos = this.productosFiltrados.filter(esInactivo);
+    this.productosActivos = this.productosFiltrados.filter((p) => !esInactivo(p));
   }
 
 }

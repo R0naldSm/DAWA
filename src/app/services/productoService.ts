@@ -11,7 +11,7 @@ export class ProductoService {
   private readonly http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  private readonly baseUrl = 'http://localhost:5000/api/Productos';
+  private readonly baseUrl = 'https://localhost:5000/api/Productos';
 
   private getHeaders() {
     const token = this.auth.getToken();
@@ -38,6 +38,7 @@ export class ProductoService {
       disponible: ui.disponible ? 'S' : 'N',
       // Muchos SPs esperan estado (A/I) o similar.
       estado: ui.estado ?? 'A',
+      Estado: ui.estado ?? 'A',
     };
   }
 
@@ -76,14 +77,14 @@ export class ProductoService {
     };
   }
 
-  getProductos(filtro?: Partial<ProductosApi>): Observable<Producto[]> {
+  getProductos(filtro?: Partial<ProductosApi>, incluirInactivos: boolean = false): Observable<Producto[]> {
     return this.http
       .post<ProductosApi[]>(`${this.baseUrl}/GetProductos`, filtro ?? {}, this.getHeaders())
       .pipe(
         map((rows) =>
           (Array.isArray(rows) ? rows : [])
             .map((r) => this.fromApi(r))
-            .filter((p) => p.estado === 'A' || p.estado === '6') // estados visibles: 'A' y '6'
+            .filter((p) => incluirInactivos || p.estado === 'A' || p.estado === '6') // estados visibles: 'A' y '6'
         )
       );
   }
