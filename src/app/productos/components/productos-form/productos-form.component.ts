@@ -6,13 +6,14 @@ import { ProductoService } from '../../../services/productoService';
 import { ProveedorService } from '../../../services/proveedorService';
 import { Producto } from '../../../interfaces/productos';
 import { Proveedor } from '../../../interfaces/proveedor';
+import { Proveedores } from '../../../components/proveedores/proveedores';
 
 @Component({
   selector: 'app-productos-form',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './productos-form.component.html',
 })
-export default class ProductosFormComponent {
+export default class ProductosForm {
   private rutaActiva = inject(ActivatedRoute);
   private router = inject(Router);
   private productoService = inject(ProductoService);
@@ -34,16 +35,21 @@ export default class ProductosFormComponent {
   });
 
   ngOnInit() {
-    // Cargar proveedores disponibles
-    this.proveedorService.cargarProveedores().subscribe({
-      next: (data) => (this.proveedores = data),
+    this.proveedorService.getProveedores().subscribe({
+      next: (data) => {
+        this.proveedores = data.map((p: any) => ({
+          IdProveedor: p.IdProveedor || p.idProveedor || p.id,
+          Nombre: p.Nombre || p.nombre,
+          Ruc: p.Ruc || p.ruc,
+          Estado: p.Estado !== undefined ? p.Estado : p.estado
+        }));
+      },
       error: (err) => {
         console.error(err);
         this.error = 'No se pudieron cargar los proveedores.';
       },
     });
 
-    // Si hay ID, cargar el producto
     this.rutaActiva.params.subscribe(params => {
       if (params['id']) {
         this.productoId = Number(params['id']);

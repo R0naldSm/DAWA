@@ -49,8 +49,8 @@ export class FormProductosPedidos {
   resetearSelectorProducto: boolean = false;
   desactivarBotonAgregar: boolean = true;
 
-  
-  
+
+
 
   // agregar al array de productos
   agregarProducto() {
@@ -82,17 +82,17 @@ export class FormProductosPedidos {
   }
 
   obtenerProductosProveedor() {
-    this.servicioProductos.getProductosAPI().subscribe({
+    this.servicioProductos.getProductos().subscribe({
       next: (data) => {
-        const productosBD = data.map((p: any) => ({
-          id: p.idProductos,
+        const productosBD = data.map((p: Producto) => ({
+          id: p.id,
           nombre: p.nombre,
           precio: p.precio,
-          idProveedor: p.idProveedor
+          idProveedor: p.proveedorId
         }));
 
         this.productos = productosBD.filter((p: any) => p.idProveedor === this.idProveedorSeleccionado());
-        
+
         const productosACargar = this.cargarProductosTabla() || [];
         if (productosACargar.length > 0) {
           productosACargar.forEach((producto) => {
@@ -119,9 +119,9 @@ export class FormProductosPedidos {
     if (cantidad <= 0) {
       return;
     }
-    
+
     let producto = this.productos.find(p => p.id === idProducto);
-    
+
     if (producto) {
       this.productosTabla.push({
         id: producto.id ?? 0,

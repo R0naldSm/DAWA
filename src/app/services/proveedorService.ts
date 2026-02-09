@@ -10,7 +10,6 @@ export class ProveedorService {
   private http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  // URL BASE (Asegúrate que sea Singular si tu controller es ProveedorController)
   private apiUrl = 'http://localhost:5000/api/Proveedor';
 
   private getHeaders() {

@@ -2,7 +2,7 @@ import { Proveedor } from './proveedor';
 
 export interface Producto {
   id?: number;
-  proveedorId: Proveedor['id'];
+  proveedorId: Proveedor['IdProveedor'];
   nombre: string;
   descripcion?: string;
   unidadMedida?: string;

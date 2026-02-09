@@ -1,62 +1,83 @@
-<section class="mt-4 d-flex flex-column align-items-center min-vh-100">
-	<div class="w-75">
-		<h2 class="mb-4">{{ productoId ? 'Editar producto' : 'Crear producto' }}</h2>
+<section class="mt-4 d-flex flex-column align-items-center min-vh-100 animate__animated animate__fadeIn">
+  <div class="w-75">
 
-		<div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+    <h2 class="mb-4 text-success fw-bold">
+      <i class="bi bi-box-seam me-2"></i>
+      {{ productoId ? 'Editar Producto' : 'Nuevo Producto' }}
+    </h2>
 
-		<form [formGroup]="form" (ngSubmit)="guardar()">
-			<div class="mb-3">
-				<label class="form-label">Proveedor *</label>
-				<select formControlName="proveedorId" class="form-select">
-					<option [value]="0">Seleccione un proveedor</option>
-					@for (prov of proveedores; track prov.id) {
-						<option [value]="prov.id">{{ prov.nombreEmpresa }}</option>
-					}
-				</select>
-				@if (form.get('proveedorId')?.invalid && form.get('proveedorId')?.touched) {
-					<small class="text-danger">Debe seleccionar un proveedor</small>
-				}
-			</div>
+    <div *ngIf="error" class="alert alert-danger py-2 d-flex align-items-center">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+    </div>
 
-			<div class="mb-3">
-				<label class="form-label">Nombre *</label>
-				<input type="text" formControlName="nombre" class="form-control" required />
-				@if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
-					<small class="text-danger">El nombre es requerido</small>
-				}
-			</div>
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="card shadow-sm p-4 border-0">
 
-			<div class="mb-3">
-				<label class="form-label">Descripción</label>
-				<textarea formControlName="descripcion" class="form-control" rows="3"></textarea>
-			</div>
+      <div class="mb-3">
+        <label class="form-label fw-bold small">Proveedor <span class="text-danger">*</span></label>
+        <select formControlName="proveedorId" class="form-select">
+          <option [ngValue]="0">Seleccione un proveedor</option>
+          @for (prov of proveedores; track prov.IdProveedor) {
+            <option [ngValue]="prov.IdProveedor">{{ prov.Nombre }}</option>
+          }
+        </select>
 
-			<div class="row">
-				<div class="col-md-4 mb-3">
-					<label class="form-label">Unidad de medida</label>
-					<input type="text" formControlName="unidadMedida" class="form-control" />
-				</div>
-				<div class="col-md-4 mb-3">
-					<label class="form-label">Precio *</label>
-					<input type="number" step="0.01" min="0" formControlName="precio" class="form-control" required />
-					@if (form.get('precio')?.invalid && form.get('precio')?.touched) {
-						<small class="text-danger">Ingrese un precio válido</small>
-					}
-				</div>
-				<div class="col-md-4 mb-3 d-flex align-items-center">
-					<div class="form-check mt-3">
-						<input class="form-check-input" type="checkbox" formControlName="disponible" id="disponibleCheck">
-						<label class="form-check-label" for="disponibleCheck">Disponible</label>
-					</div>
-				</div>
-			</div>
+        @if (form.get('proveedorId')?.invalid && (form.get('proveedorId')?.touched || form.get('proveedorId')?.dirty)) {
+          <small class="text-danger">Debe seleccionar un proveedor válido</small>
+        }
+      </div>
 
-			<div class="d-flex gap-2 mt-3">
-				<button class="btn btn-success" type="submit" [disabled]="guardando || form.invalid">
-					{{ guardando ? 'Guardando...' : 'Guardar' }}
-				</button>
-				<button class="btn btn-secondary" type="button" (click)="cancelar()">Cancelar</button>
-			</div>
-		</form>
-	</div>
+      <div class="mb-3">
+        <label class="form-label fw-bold small">Nombre del Producto <span class="text-danger">*</span></label>
+        <input type="text" formControlName="nombre" class="form-control" placeholder="Ej: Urea 46%" />
+
+        @if (form.get('nombre')?.invalid && (form.get('nombre')?.touched || form.get('nombre')?.dirty)) {
+          <small class="text-danger">El nombre es requerido</small>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold small">Descripción</label>
+        <textarea formControlName="descripcion" class="form-control" rows="3" placeholder="Detalles del producto..."></textarea>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold small">Unidad de Medida</label>
+          <input type="text" formControlName="unidadMedida" class="form-control" placeholder="Ej: Saco 50kg" />
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <label class="form-label fw-bold small">Precio <span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" step="0.01" min="0" formControlName="precio" class="form-control" placeholder="0.00" />
+          </div>
+
+          @if (form.get('precio')?.invalid && (form.get('precio')?.touched || form.get('precio')?.dirty)) {
+            <small class="text-danger">Ingrese un precio válido</small>
+          }
+        </div>
+
+        <div class="col-md-4 mb-3 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" formControlName="disponible" id="disponibleCheck">
+            <label class="form-check-label fw-bold text-secondary" for="disponibleCheck">
+              Disponible para venta
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button class="btn btn-secondary" type="button" (click)="cancelar()">
+          <i class="bi bi-x-lg me-1"></i> Cancelar
+        </button>
+        <button class="btn btn-success" type="submit" [disabled]="guardando || form.invalid">
+          <i class="bi bi-save me-1"></i> {{ guardando ? 'Guardando...' : 'Guardar Producto' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
 </section>
