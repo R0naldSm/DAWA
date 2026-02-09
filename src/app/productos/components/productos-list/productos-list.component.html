@@ -5,6 +5,9 @@
 		<form [formGroup]="formBusqueda" class="mb-4 w-auto align-self-start text-start">
 			<h2 class="mb-4">Lista de Productos</h2>
 
+			<div *ngIf="cargando" class="alert alert-info py-2">Cargando productos...</div>
+			<div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+
 			<label class="form-label">Buscar proveedor (id o texto)</label>
 			<input formControlName="proveedor" type="text" class="form-control" />
 			<div class="mt-2">
@@ -16,7 +19,7 @@
 			<thead>
 				<tr class="text-center">
 					<th scope="col">#</th>
-					<th scope="col">Proveedor</th>
+					<th scope="col">ID Proveedor</th>
 					<th scope="col">Nombre</th>
 					<th scope="col">Unidad</th>
 					<th scope="col">Precio</th>
@@ -29,15 +32,15 @@
 				@for (p of productos().slice((pagina - 1) * 10, (pagina - 1) * 10 + 10); track p.id) {
 					<tr>
 						<td scope="row">{{p.id}}</td>
-						<td>{{p.id_proveedor || p.proveedorId}}</td>
-						<td>{{p.nombre || p.nombreProducto}}</td>
+						<td>{{p.proveedorId}}</td>
+						<td>{{p.nombre}}</td>
 						<td>{{p.unidadMedida}}</td>
 						<td>$ {{p.precio}}</td>
-						<td>{{ (p.disponible ?? p.disponibilidad) ? 'Sí' : 'No' }}</td>
+						<td>{{ p.disponible ? 'Sí' : 'No' }}</td>
 						<td class="d-flex gap-2">
 							<button class="btn btn-outline-primary btn-sm" (click)="editar(p.id)">Editar</button>
 							<button class="btn btn-danger btn-sm" (click)="eliminar(p.id)">Eliminar</button>
-							<button class="btn btn-success btn-sm" (click)="toggle(p.id)">{{ (p.disponible ?? p.disponibilidad) ? 'Desactivar' : 'Activar' }}</button>
+							<button class="btn btn-success btn-sm" (click)="toggle(p.id)">{{ p.disponible ? 'Desactivar' : 'Activar' }}</button>
 						</td>
 					</tr>
 				}

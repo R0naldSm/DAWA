@@ -1,14 +1,12 @@
-export interface Producto {
-  // Campos originales del dataset
-  id_proveedor: number;
-  nombre: string;
-  descripcion: string;
-  unidadMedida: string;
-  precio: number;
-  disponibilidad: boolean;
+import { Proveedor } from './proveedor';
 
-  // Campos opcionales para compatibilidad con componentes
+export interface Producto {
   id?: number;
-  proveedorId?: number;
-  disponible?: boolean;
+  proveedorId: Proveedor['id'];
+  nombre: string;
+  descripcion?: string;
+  unidadMedida?: string;
+  precio: number;
+  disponible: boolean;
+  estado?: string; // 'A' = Activo, 'I' = Inactivo (eliminado lógicamente)
 }

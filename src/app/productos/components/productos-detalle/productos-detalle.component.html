@@ -8,10 +8,10 @@
         <dd class="col-sm-9">{{producto.id}}</dd>
 
         <dt class="col-sm-3">Proveedor</dt>
-        <dd class="col-sm-9">{{producto.id_proveedor || producto.proveedorId}}</dd>
+        <dd class="col-sm-9">{{producto.proveedorId}}</dd>
 
         <dt class="col-sm-3">Nombre</dt>
-        <dd class="col-sm-9">{{producto.nombre || producto.nombreProducto}}</dd>
+        <dd class="col-sm-9">{{producto.nombre}}</dd>
 
         <dt class="col-sm-3">Descripción</dt>
         <dd class="col-sm-9">{{producto.descripcion}}</dd>
@@ -23,7 +23,7 @@
         <dd class="col-sm-9">$ {{producto.precio}}</dd>
 
         <dt class="col-sm-3">Disponible</dt>
-        <dd class="col-sm-9">{{ (producto.disponible ?? producto.disponibilidad) ? 'Sí' : 'No' }}</dd>
+        <dd class="col-sm-9">{{ producto.disponible ? 'Sí' : 'No' }}</dd>
       </dl>
 
       <div class="d-flex gap-2">

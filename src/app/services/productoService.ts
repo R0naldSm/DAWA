@@ -1,256 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { Producto } from '../interfaces/productos';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
+import { Producto } from '../interfaces/productos';
 import { AuthService } from './auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductoService {
-  private productos: Producto[] = [
-    {
-      id_proveedor: 1,
-      nombre: "Laptop HP ProBook 450",
-      descripcion: "Laptop empresarial con procesador Intel i5 y 16GB RAM",
-      unidadMedida: "unidad",
-      precio: 950.00,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 2,
-      nombre: "Fertilizante Orgánico AndesGrow",
-      descripcion: "Fertilizante natural para cultivos de hortalizas y frutas",
-      unidadMedida: "saco (50kg)",
-      precio: 28.50,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 3,
-      nombre: "Cemento Portland 50kg",
-      descripcion: "Cemento de alta resistencia para construcción general",
-      unidadMedida: "saco",
-      precio: 9.75,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 4,
-      nombre: "Aceite de Girasol El Oro",
-      descripcion: "Aceite vegetal 100% natural, ideal para cocinar",
-      unidadMedida: "litro",
-      precio: 3.20,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 5,
-      nombre: "Guantes de Latex Médicos",
-      descripcion: "Guantes desechables para uso médico y laboratorio",
-      unidadMedida: "caja (100 unidades)",
-      precio: 12.90,
-      disponibilidad: false
-    },
-    {
-      id_proveedor: 6,
-      nombre: "Foco LED 15W",
-      descripcion: "Foco de bajo consumo, luz blanca fría 6500K",
-      unidadMedida: "unidad",
-      precio: 2.80,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 7,
-      nombre: "Cartucho de Tinta HP 662",
-      descripcion: "Cartucho negro compatible con impresoras HP DeskJet",
-      unidadMedida: "unidad",
-      precio: 17.40,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 8,
-      nombre: "Agua Mineral 500ml",
-      descripcion: "Agua purificada de manantial andino",
-      unidadMedida: "botella",
-      precio: 0.75,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 9,
-      nombre: "Lubricante Automotriz 20W50",
-      descripcion: "Aceite de motor multigrado para vehículos a gasolina",
-      unidadMedida: "galón",
-      precio: 22.00,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 10,
-      nombre: "Camiseta de Algodón Eco",
-      descripcion: "Camiseta ecológica elaborada con algodón reciclado",
-      unidadMedida: "unidad",
-      precio: 8.50,
-      disponibilidad: false
-    },
-    {
-      id_proveedor: 11,
-      nombre: "Cereal Natural Mix 500g",
-      descripcion: "Cereal con avena, pasas y frutos secos sin azúcar",
-      unidadMedida: "paquete",
-      precio: 4.30,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 12,
-      nombre: "Martillo de Acero 16oz",
-      descripcion: "Martillo de uso general con mango de goma",
-      unidadMedida: "unidad",
-      precio: 6.90,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 13,
-      nombre: "Router Wi-Fi D-Link N300",
-      descripcion: "Router inalámbrico con velocidad de hasta 300 Mbps",
-      unidadMedida: "unidad",
-      precio: 32.00,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 14,
-      nombre: "Semillas de Papa SuperAndina",
-      descripcion: "Semillas certificadas para cultivo de papa de altura",
-      unidadMedida: "saco (25kg)",
-      precio: 18.20,
-      disponibilidad: false
-    },
-    {
-      id_proveedor: 15,
-      nombre: "Televisor LED 43'' Full HD",
-      descripcion: "Televisor de alta definición con entrada HDMI y USB",
-      unidadMedida: "unidad",
-      precio: 379.00,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 16,
-      nombre: "Caja de Mangos Orgánicos",
-      descripcion: "Caja de 10kg de mangos orgánicos certificados",
-      unidadMedida: "caja",
-      precio: 21.50,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 17,
-      nombre: "Resma de Papel A4 80g",
-      descripcion: "Papel blanco de alta calidad para impresión y copiado",
-      unidadMedida: "paquete (500 hojas)",
-      precio: 5.25,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 18,
-      nombre: "Servicio de Transporte Logístico",
-      descripcion: "Transporte de mercancías dentro del Ecuador",
-      unidadMedida: "servicio",
-      precio: 150.00,
-      disponibilidad: true
-    },
-    {
-      id_proveedor: 19,
-      nombre: "Mouse Gamer RGB",
-      descripcion: "Mouse ergonómico con iluminación RGB y 6 botones",
-      unidadMedida: "unidad",
-      precio: 24.99,
-      disponibilidad: false
-    },
-    {
-      id_proveedor: 20,
-      nombre: "Shampoo Natural BioHerbal",
-      descripcion: "Shampoo con extractos naturales de romero y aloe vera",
-      unidadMedida: "botella (500ml)",
-      precio: 6.80,
-      disponibilidad: true
-    }
-  ];
-
-  private nextId = 1;
-
-  constructor() {
-    // Asignar IDs y campos de compatibilidad al iniciar
-    this.productos = this.productos.map((p, index) => ({
-      ...p,
-      id: index + 1,
-      proveedorId: p.id_proveedor,
-      nombre: p.nombre,
-      disponible: p.disponibilidad,
-    }));
-    this.nextId = this.productos.length + 1;
-  }
-
-  getProductos(): Producto[] {
-    return this.productos;
-  }
-
-  getByProveedor(idProveedor: number): Producto[] {
-    return this.productos.filter(p => (p.id_proveedor === idProveedor) || (p.proveedorId === idProveedor));
-  }
-
-
-  getById(id: number): Producto | undefined {
-    return this.productos.find(p => p.id === id);
-  }
-
-  create(payload: Producto): Producto {
-    const nuevo: Producto = {
-      id: this.nextId++,
-      id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? 0,
-      proveedorId: payload.proveedorId ?? payload.id_proveedor ?? 0,
-      nombre: payload.nombre ?? payload.nombre ?? '',
-      descripcion: payload.descripcion ?? '',
-      unidadMedida: payload.unidadMedida ?? '',
-      precio: payload.precio ?? 0,
-      disponibilidad: payload.disponible ?? payload.disponibilidad ?? true,
-      disponible: payload.disponible ?? payload.disponibilidad ?? true,
-    };
-    this.productos.push(nuevo);
-    return nuevo;
-  }
-
-  update(payload: Producto): void {
-    if (!payload.id) return;
-    const idx = this.productos.findIndex(p => p.id === payload.id);
-    if (idx === -1) return;
-    const actual = this.productos[idx];
-    const actualizado: Producto = {
-      ...actual,
-      id_proveedor: payload.proveedorId ?? payload.id_proveedor ?? actual.id_proveedor,
-      proveedorId: payload.proveedorId ?? payload.id_proveedor ?? actual.proveedorId,
-      nombre: payload.nombre ?? payload.nombre ?? actual.nombre,
-      descripcion: payload.descripcion ?? actual.descripcion,
-      unidadMedida: payload.unidadMedida ?? actual.unidadMedida,
-      precio: payload.precio ?? actual.precio,
-      disponibilidad: payload.disponible ?? payload.disponibilidad ?? actual.disponibilidad,
-      disponible: payload.disponible ?? payload.disponibilidad ?? actual.disponible,
-    };
-    this.productos[idx] = actualizado;
-  }
-
-  delete(id: number): void {
-    this.productos = this.productos.filter(p => p.id !== id);
-  }
-
-  toggleDisponibilidad(id: number): void {
-    const p = this.getById(id);
-    if (!p) return;
-    const nueva = !(p.disponible ?? p.disponibilidad);
-    p.disponibilidad = nueva;
-    p.disponible = nueva;
-  }
-
-
-  // consulta a la API (necesario para pedido, modificar si asi lo necesitas)
-  private http = inject(HttpClient);
+  private readonly http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  private apiUrl = 'http://localhost:5000/api/Productos';
+  private readonly baseUrl = 'http://localhost:5000/api/Productos';
 
   private getHeaders() {
     const token = this.auth.getToken();
@@ -262,10 +23,168 @@ export class ProductoService {
     };
   }
 
-  getProductosAPI(): Observable<any[]> {
-    const body = {
-      Transaccion: 'CONSULTAR'
+  // DTO aproximado del backend (nombres típicos del modelo C#).
+  // El backend parece aceptar variantes de columnas/nombres; aquí enviamos los más comunes.
+  private toApi(ui: Producto): ProductosApi {
+    return {
+      idProductos: ui.id,
+      IdProveedor: ui.proveedorId,
+      nombre: ui.nombre,
+      descripcion: ui.descripcion ?? '', // Enviar siempre, nunca null
+      unidadMedida: ui.unidadMedida ?? '', // Enviar siempre, nunca null
+      precio: ui.precio,
+      // En tu backend, `disponible` se trata como string al leer DataRow.
+      // Para evitar error de model-binding (bool -> string), enviamos "S"/"N".
+      disponible: ui.disponible ? 'S' : 'N',
+      // Muchos SPs esperan estado (A/I) o similar.
+      estado: ui.estado ?? 'A',
     };
-    return this.http.post<any[]>(`${this.apiUrl}/GetProductos`, body, this.getHeaders());
   }
+
+  private fromApi(api: ProductosApi): Producto {
+    const rawId = api.idProductos ?? api.IdProductos ?? api.IdProducto ?? 0;
+    const rawProveedorId = (
+      api.IdProveedor ??
+      api.idProveedor ??
+      api.proveedorId ??
+      api.ProveedorId ??
+      api.Id_Proveedor ??
+      api.id_proveedor ??
+      pickNumberCaseInsensitive(api, ['IdProveedor', 'ProveedorId', 'Id_Proveedor', 'idProveedor', 'id_proveedor', 'proveedorId'])
+    ) || pickNumberByKeySubstring(api, 'proveedor');
+
+    const id = toNumber(rawId) || undefined;
+    const proveedorId = toNumber(rawProveedorId);
+
+    if (id && (!proveedorId || proveedorId <= 0)) {
+      // eslint-disable-next-line no-console
+      console.warn('Producto sin IdProveedor en respuesta backend:', {
+        id,
+        keys: Object.keys(api as any),
+      });
+    }
+
+    return {
+      id: toNumber(rawId) || undefined,
+      proveedorId,
+      nombre: String(api.nombre ?? api.Nombre ?? ''),
+      descripcion: String(api.descripcion ?? api.Descripcion ?? '') || undefined,
+      unidadMedida: String(api.unidadMedida ?? api.UnidadMedida ?? api.Unidad_Medida ?? '') || undefined,
+      precio: Number(api.precio ?? api.Precio ?? 0),
+      disponible: parseDisponible(api.disponible ?? api.Disponible),
+      estado: String(api.estado ?? api.Estado ?? 'A'),
+    };
+  }
+
+  getProductos(filtro?: Partial<ProductosApi>): Observable<Producto[]> {
+    return this.http
+      .post<ProductosApi[]>(`${this.baseUrl}/GetProductos`, filtro ?? {}, this.getHeaders())
+      .pipe(
+        map((rows) =>
+          (Array.isArray(rows) ? rows : [])
+            .map((r) => this.fromApi(r))
+            .filter((p) => p.estado === 'A' || p.estado === '6') // estados visibles: 'A' y '6'
+        )
+      );
+  }
+
+  getById(id: number): Observable<Producto | null> {
+    if (!id) return of(null);
+    return this.http
+      .post<ProductosApi>(`${this.baseUrl}/GetProductoPorId`, { idProductos: id }, this.getHeaders())
+      .pipe(map((row) => (row ? this.fromApi(row) : null)));
+  }
+
+  create(payload: Producto): Observable<unknown> {
+    return this.http.post(`${this.baseUrl}/InsertarProducto`, this.toApi(payload), this.getHeaders());
+  }
+
+  update(payload: Producto): Observable<unknown> {
+    return this.http.put(`${this.baseUrl}/ActualizarProducto`, this.toApi(payload), this.getHeaders());
+  }
+
+  delete(producto: Producto | number): Observable<unknown> {
+    const headers = this.getHeaders();
+    if (typeof producto === 'number') {
+      // Si solo recibe el ID, enviamos un objeto minimal pero completo
+      return this.http.delete(`${this.baseUrl}/EliminarProducto`, { ...headers, body: { idProductos: producto } });
+    }
+    // Si recibe el objeto completo, lo enviamos con todos los campos
+    return this.http.delete(`${this.baseUrl}/EliminarProducto`, { ...headers, body: this.toApi(producto) });
+  }
+}
+
+type ProductosApi = {
+  // IDs
+  idProductos?: number;
+  IdProductos?: number;
+  IdProducto?: number;
+
+  // proveedor
+  IdProveedor?: number;
+  idProveedor?: number;
+  proveedorId?: number;
+  ProveedorId?: number;
+  Id_Proveedor?: number;
+  id_proveedor?: number;
+
+  // campos
+  nombre?: string;
+  Nombre?: string;
+  descripcion?: string;
+  Descripcion?: string;
+  unidadMedida?: string;
+  UnidadMedida?: string;
+  Unidad_Medida?: string;
+  precio?: number;
+  Precio?: number;
+  disponible?: boolean | string | number | null;
+  Disponible?: boolean | string | number | null;
+  estado?: string | null;
+  Estado?: string | null;
+};
+
+function parseDisponible(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  if (typeof value === 'string') {
+    const v = value.trim().toLowerCase();
+    if (v === 'true' || v === '1' || v === 's' || v === 'si' || v === 'sí' || v === 'y') return true;
+    if (v === 'false' || v === '0' || v === 'n' || v === 'no') return false;
+  }
+  return false;
+}
+
+function toNumber(value: unknown): number {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  if (typeof value === 'string') {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+  }
+  return 0;
+}
+
+function pickNumberCaseInsensitive(obj: unknown, keys: string[]): number {
+  if (!obj || typeof obj !== 'object') return 0;
+  const rec = obj as Record<string, unknown>;
+  const wanted = new Set(keys.map((k) => k.toLowerCase()));
+  for (const k of Object.keys(rec)) {
+    if (wanted.has(k.toLowerCase())) {
+      return toNumber(rec[k]);
+    }
+  }
+  return 0;
+}
+
+function pickNumberByKeySubstring(obj: unknown, substring: string): number {
+  if (!obj || typeof obj !== 'object') return 0;
+  const rec = obj as Record<string, unknown>;
+  const needle = substring.toLowerCase();
+  for (const k of Object.keys(rec)) {
+    if (k.toLowerCase().includes(needle)) {
+      const n = toNumber(rec[k]);
+      if (n) return n;
+    }
+  }
+  return 0;
 }

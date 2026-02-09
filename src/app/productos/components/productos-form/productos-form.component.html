@@ -2,15 +2,28 @@
 	<div class="w-75">
 		<h2 class="mb-4">{{ productoId ? 'Editar producto' : 'Crear producto' }}</h2>
 
+		<div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+
 		<form [formGroup]="form" (ngSubmit)="guardar()">
 			<div class="mb-3">
-				<label class="form-label">Proveedor ID</label>
-				<input type="number" formControlName="proveedorId" class="form-control" />
+				<label class="form-label">Proveedor *</label>
+				<select formControlName="proveedorId" class="form-select">
+					<option [value]="0">Seleccione un proveedor</option>
+					@for (prov of proveedores; track prov.id) {
+						<option [value]="prov.id">{{ prov.nombreEmpresa }}</option>
+					}
+				</select>
+				@if (form.get('proveedorId')?.invalid && form.get('proveedorId')?.touched) {
+					<small class="text-danger">Debe seleccionar un proveedor</small>
+				}
 			</div>
 
 			<div class="mb-3">
-				<label class="form-label">Nombre</label>
+				<label class="form-label">Nombre *</label>
 				<input type="text" formControlName="nombre" class="form-control" required />
+				@if (form.get('nombre')?.invalid && form.get('nombre')?.touched) {
+					<small class="text-danger">El nombre es requerido</small>
+				}
 			</div>
 
 			<div class="mb-3">
@@ -24,8 +37,11 @@
 					<input type="text" formControlName="unidadMedida" class="form-control" />
 				</div>
 				<div class="col-md-4 mb-3">
-					<label class="form-label">Precio</label>
-					<input type="number" step="0.01" formControlName="precio" class="form-control" />
+					<label class="form-label">Precio *</label>
+					<input type="number" step="0.01" min="0" formControlName="precio" class="form-control" required />
+					@if (form.get('precio')?.invalid && form.get('precio')?.touched) {
+						<small class="text-danger">Ingrese un precio válido</small>
+					}
 				</div>
 				<div class="col-md-4 mb-3 d-flex align-items-center">
 					<div class="form-check mt-3">
@@ -36,7 +52,9 @@
 			</div>
 
 			<div class="d-flex gap-2 mt-3">
-				<button class="btn btn-success" type="submit">Guardar</button>
+				<button class="btn btn-success" type="submit" [disabled]="guardando || form.invalid">
+					{{ guardando ? 'Guardando...' : 'Guardar' }}
+				</button>
 				<button class="btn btn-secondary" type="button" (click)="cancelar()">Cancelar</button>
 			</div>
 		</form>
