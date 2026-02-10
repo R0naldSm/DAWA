@@ -39,22 +39,23 @@ export default class ProductosList {
   }
 
   private cargarProductos() {
-    this.cargando = true;
-    this.error = null;
-    this.productoService.getProductos(undefined, true).subscribe({
-      next: (rows) => {
-        this.productosAll = rows;
-        this.aplicarFiltro();
-        this.cargando = false;
-      },
-      error: (err) => {
-        this.cargando = false;
-        this.error = 'No se pudo cargar productos.';
-        // eslint-disable-next-line no-console
-        console.error(err);
-      },
-    });
-  }
+  this.cargando = true;
+  this.error = null;
+
+  // Llama al servicio. Si el backend ya filtra, no necesitas filtrar de nuevo en el front tan agresivamente
+  this.productoService.getProductos(true).subscribe({
+    next: (rows) => {
+      this.productosAll = rows;
+      this.aplicarFiltro(); // Esto actualizará las listas
+      this.cargando = false;
+    },
+    error: (err) => {
+      this.cargando = false;
+      this.error = 'No se pudo cargar productos. Revisa la consola (F12).';
+      console.error('Error de API:', err);
+    },
+  });
+}
 
   private aplicarFiltro() {
     const proveedor = (this.formBusqueda.value.proveedor || '').trim();

@@ -11,7 +11,9 @@ export class ProductoService {
   private readonly http = inject(HttpClient);
   private auth = inject(AuthService);
 
-  private readonly baseUrl = 'https://localhost:5000/api/Productos';
+  // IMPORTANTE: Puerto 5000 suele ser HTTP. Si usas HTTPS es otro puerto (ej. 7192 o 443).
+  // Si tu backend corre en https, cambia esto a 'https'.
+  private readonly baseUrl = 'http://localhost:5000/api/Productos';
 
   private getHeaders() {
     const token = this.auth.getToken();
@@ -23,20 +25,76 @@ export class ProductoService {
     };
   }
 
-  // DTO aproximado del backend (nombres típicos del modelo C#).
-  // El backend parece aceptar variantes de columnas/nombres; aquí enviamos los más comunes.
+  // --- MÉTODOS PÚBLICOS ---
+
+  // 1. GET PRODUCTOS (Vía POST como pide tu backend)
+  getProductos(incluirInactivos: boolean = false): Observable<Producto[]> {
+    // Tu backend espera [FromBody] Productos filtro.
+    // Enviamos un objeto vacío o con filtros básicos si fuera necesario.
+    const body = {};
+
+    return this.http
+      .post<ProductosApi[]>(`${this.baseUrl}/GetProductos`, body, this.getHeaders())
+      .pipe(
+        map((rows) =>
+          (Array.isArray(rows) ? rows : [])
+            .map((r) => this.fromApi(r))
+            .filter((p) => incluirInactivos || p.estado === 'A' || p.estado === '6')
+        )
+      );
+  }
+
+  // 2. GET BY ID (Vía POST como pide tu backend)
+  getById(id: number): Observable<Producto | null> {
+    if (!id) return of(null);
+
+    // Tu backend espera un objeto Productos con el ID dentro.
+    const body = { idProductos: id };
+
+    return this.http
+      .post<ProductosApi>(`${this.baseUrl}/GetProductoPorId`, body, this.getHeaders())
+      .pipe(map((row) => (row ? this.fromApi(row) : null)));
+  }
+
+  // 3. CREATE
+  create(payload: Producto): Observable<unknown> {
+    return this.http.post(`${this.baseUrl}/InsertarProducto`, this.toApi(payload), this.getHeaders());
+  }
+
+  // 4. UPDATE
+  update(payload: Producto): Observable<unknown> {
+    return this.http.put(`${this.baseUrl}/ActualizarProducto`, this.toApi(payload), this.getHeaders());
+  }
+
+  // 5. DELETE (Ojo: Delete con Body en Angular requiere configuración especial)
+  delete(producto: Producto | number): Observable<unknown> {
+    const headers = this.getHeaders();
+    let bodyData: any;
+
+    if (typeof producto === 'number') {
+      bodyData = { idProductos: producto };
+    } else {
+      bodyData = this.toApi(producto);
+    }
+
+    // Para enviar Body en un DELETE, se usa la propiedad 'body' dentro de las opciones
+    return this.http.delete(`${this.baseUrl}/EliminarProducto`, {
+      headers: headers.headers,
+      body: bodyData
+    });
+  }
+
+  // --- MAPPERS ---
+
   private toApi(ui: Producto): ProductosApi {
     return {
       idProductos: ui.id,
       IdProveedor: ui.proveedorId,
       nombre: ui.nombre,
-      descripcion: ui.descripcion ?? '', // Enviar siempre, nunca null
-      unidadMedida: ui.unidadMedida ?? '', // Enviar siempre, nunca null
+      descripcion: ui.descripcion ?? '',
+      unidadMedida: ui.unidadMedida ?? '',
       precio: ui.precio,
-      // En tu backend, `disponible` se trata como string al leer DataRow.
-      // Para evitar error de model-binding (bool -> string), enviamos "S"/"N".
       disponible: ui.disponible ? 'S' : 'N',
-      // Muchos SPs esperan estado (A/I) o similar.
       estado: ui.estado ?? 'A',
       Estado: ui.estado ?? 'A',
     };
@@ -44,6 +102,8 @@ export class ProductoService {
 
   private fromApi(api: ProductosApi): Producto {
     const rawId = api.idProductos ?? api.IdProductos ?? api.IdProducto ?? 0;
+
+    // Lógica robusta para encontrar el ID del proveedor
     const rawProveedorId = (
       api.IdProveedor ??
       api.idProveedor ??
@@ -54,20 +114,9 @@ export class ProductoService {
       pickNumberCaseInsensitive(api, ['IdProveedor', 'ProveedorId', 'Id_Proveedor', 'idProveedor', 'id_proveedor', 'proveedorId'])
     ) || pickNumberByKeySubstring(api, 'proveedor');
 
-    const id = toNumber(rawId) || undefined;
-    const proveedorId = toNumber(rawProveedorId);
-
-    if (id && (!proveedorId || proveedorId <= 0)) {
-      // eslint-disable-next-line no-console
-      console.warn('Producto sin IdProveedor en respuesta backend:', {
-        id,
-        keys: Object.keys(api as any),
-      });
-    }
-
     return {
       id: toNumber(rawId) || undefined,
-      proveedorId,
+      proveedorId: toNumber(rawProveedorId),
       nombre: String(api.nombre ?? api.Nombre ?? ''),
       descripcion: String(api.descripcion ?? api.Descripcion ?? '') || undefined,
       unidadMedida: String(api.unidadMedida ?? api.UnidadMedida ?? api.Unidad_Medida ?? '') || undefined,
@@ -76,73 +125,19 @@ export class ProductoService {
       estado: String(api.estado ?? api.Estado ?? 'A'),
     };
   }
-
-  getProductos(filtro?: Partial<ProductosApi>, incluirInactivos: boolean = false): Observable<Producto[]> {
-    return this.http
-      .post<ProductosApi[]>(`${this.baseUrl}/GetProductos`, filtro ?? {}, this.getHeaders())
-      .pipe(
-        map((rows) =>
-          (Array.isArray(rows) ? rows : [])
-            .map((r) => this.fromApi(r))
-            .filter((p) => incluirInactivos || p.estado === 'A' || p.estado === '6') // estados visibles: 'A' y '6'
-        )
-      );
-  }
-
-  getById(id: number): Observable<Producto | null> {
-    if (!id) return of(null);
-    return this.http
-      .post<ProductosApi>(`${this.baseUrl}/GetProductoPorId`, { idProductos: id }, this.getHeaders())
-      .pipe(map((row) => (row ? this.fromApi(row) : null)));
-  }
-
-  create(payload: Producto): Observable<unknown> {
-    return this.http.post(`${this.baseUrl}/InsertarProducto`, this.toApi(payload), this.getHeaders());
-  }
-
-  update(payload: Producto): Observable<unknown> {
-    return this.http.put(`${this.baseUrl}/ActualizarProducto`, this.toApi(payload), this.getHeaders());
-  }
-
-  delete(producto: Producto | number): Observable<unknown> {
-    const headers = this.getHeaders();
-    if (typeof producto === 'number') {
-      // Si solo recibe el ID, enviamos un objeto minimal pero completo
-      return this.http.delete(`${this.baseUrl}/EliminarProducto`, { ...headers, body: { idProductos: producto } });
-    }
-    // Si recibe el objeto completo, lo enviamos con todos los campos
-    return this.http.delete(`${this.baseUrl}/EliminarProducto`, { ...headers, body: this.toApi(producto) });
-  }
 }
 
+// --- UTILIDADES ---
+
 type ProductosApi = {
-  // IDs
-  idProductos?: number;
-  IdProductos?: number;
-  IdProducto?: number;
-
-  // proveedor
-  IdProveedor?: number;
-  idProveedor?: number;
-  proveedorId?: number;
-  ProveedorId?: number;
-  Id_Proveedor?: number;
-  id_proveedor?: number;
-
-  // campos
-  nombre?: string;
-  Nombre?: string;
-  descripcion?: string;
-  Descripcion?: string;
-  unidadMedida?: string;
-  UnidadMedida?: string;
-  Unidad_Medida?: string;
-  precio?: number;
-  Precio?: number;
-  disponible?: boolean | string | number | null;
-  Disponible?: boolean | string | number | null;
-  estado?: string | null;
-  Estado?: string | null;
+  idProductos?: number;  IdProductos?: number;  IdProducto?: number;
+  IdProveedor?: number;  idProveedor?: number;  proveedorId?: number;  ProveedorId?: number;  Id_Proveedor?: number;  id_proveedor?: number;
+  nombre?: string;       Nombre?: string;
+  descripcion?: string;  Descripcion?: string;
+  unidadMedida?: string; UnidadMedida?: string; Unidad_Medida?: string;
+  precio?: number;       Precio?: number;
+  disponible?: boolean | string | number | null; Disponible?: boolean | string | number | null;
+  estado?: string | null; Estado?: string | null;
 };
 
 function parseDisponible(value: unknown): boolean {
@@ -150,8 +145,7 @@ function parseDisponible(value: unknown): boolean {
   if (typeof value === 'number') return value !== 0;
   if (typeof value === 'string') {
     const v = value.trim().toLowerCase();
-    if (v === 'true' || v === '1' || v === 's' || v === 'si' || v === 'sí' || v === 'y') return true;
-    if (v === 'false' || v === '0' || v === 'n' || v === 'no') return false;
+    return v === 'true' || v === '1' || v === 's' || v === 'si' || v === 'sí' || v === 'y';
   }
   return false;
 }
@@ -170,9 +164,7 @@ function pickNumberCaseInsensitive(obj: unknown, keys: string[]): number {
   const rec = obj as Record<string, unknown>;
   const wanted = new Set(keys.map((k) => k.toLowerCase()));
   for (const k of Object.keys(rec)) {
-    if (wanted.has(k.toLowerCase())) {
-      return toNumber(rec[k]);
-    }
+    if (wanted.has(k.toLowerCase())) return toNumber(rec[k]);
   }
   return 0;
 }
