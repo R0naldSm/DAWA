@@ -45,12 +45,12 @@
           <div class="chart-container" style="height: 300px;">
             <div class="d-flex align-items-end justify-content-around h-100 pb-3">
               <div *ngFor="let venta of ventasMensuales" class="text-center" style="flex: 1;">
-                <div 
+                <div
                   class="bg-success rounded-top mx-2 position-relative"
-                  [style.height.%]="getAlturaGrafico(venta.ventas)"
+                  [style.height.%]="(venta.ventas)"
                   [attr.data-bs-toggle]="'tooltip'"
                   [attr.title]="'$' + venta.ventas.toLocaleString()">
-                  <span 
+                  <span
                     class="position-absolute top-0 start-50 translate-middle badge bg-dark"
                     style="margin-top: -10px;">
                     ${{(venta.ventas/1000).toFixed(1)}}k
@@ -82,9 +82,9 @@
               <span class="badge bg-{{producto.color}}">{{ producto.cantidad }}</span>
             </div>
             <div class="progress" style="height: 8px;">
-              <div 
-                class="progress-bar bg-{{producto.color}}" 
-                [style.width.%]="getPorcentajeProducto(producto.cantidad)">
+              <div
+                class="progress-bar bg-{{producto.color}}"
+                [style.width.%]="(producto.cantidad)">
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@
                   <td>{{ pedido.proveedor }}</td>
                   <td>{{ pedido.fecha }}</td>
                   <td>
-                    <span [ngClass]="getEstadoClass(pedido.estado)">
+                    <span [ngClass]="getColorEstado(pedido.estado)">
                       {{ pedido.estado }}
                     </span>
                   </td>
@@ -150,7 +150,7 @@
               <p class="mb-0 small">Tienes 2 pagos vencidos por revisar</p>
             </div>
           </div>
-          
+
           <div class="alert alert-warning d-flex align-items-center mb-3" role="alert">
             <i class="bi bi-box-seam me-2"></i>
             <div>
@@ -158,7 +158,7 @@
               <p class="mb-0 small">3 productos con inventario crítico</p>
             </div>
           </div>
-          
+
           <div class="alert alert-info d-flex align-items-center mb-3" role="alert">
             <i class="bi bi-truck me-2"></i>
             <div>
@@ -166,7 +166,7 @@
               <p class="mb-0 small">4 pedidos programados para entrega</p>
             </div>
           </div>
-          
+
           <div class="alert alert-success d-flex align-items-center mb-0" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>
             <div>

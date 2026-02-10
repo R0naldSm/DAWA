@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { DashboardService } from '../../services/dashboardServices';
-import { AuthService } from '../../../services/auth';
+import { DashboardService } from '../../services/dashboardService';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   estadisticas: any = {};
   pedidosRecientes: any[] = [];
   productosPopulares: any[] = [];
-  ventasMensuales: any[] = []; 
+  ventasMensuales: any[] = [];
 
   // Estados de carga
   cargandoEstadisticas: boolean = true;
@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit {
     this.cargandoEstadisticas = true;
     this.errorEstadisticas = null;
 
-    this.dashboardService.obtenerEstadisticas().subscribe({
+    this.dashboardService.getEstadisticas().subscribe({
       next: (data) => {
         this.estadisticas = data;
         this.cargandoEstadisticas = false;
@@ -90,7 +90,7 @@ export class DashboardComponent implements OnInit {
         console.error('❌ Error cargando estadísticas:', error);
         this.errorEstadisticas = 'No se pudieron cargar las estadísticas';
         this.cargandoEstadisticas = false;
-        
+
         // Datos de ejemplo para desarrollo
         if (error.status === 0 || error.status === 404) {
           this.estadisticas = {
@@ -111,7 +111,7 @@ export class DashboardComponent implements OnInit {
     this.cargandoPedidos = true;
     this.errorPedidos = null;
 
-    this.dashboardService.obtenerPedidosRecientes().subscribe({
+    this.dashboardService.getPedidosRecientes().subscribe({
       next: (data) => {
         this.pedidosRecientes = data.slice(0, 5); // Solo los 5 más recientes
         this.cargandoPedidos = false;
@@ -121,7 +121,7 @@ export class DashboardComponent implements OnInit {
         console.error('❌ Error cargando pedidos recientes:', error);
         this.errorPedidos = 'No se pudieron cargar los pedidos recientes';
         this.cargandoPedidos = false;
-        
+
         // Datos de ejemplo para desarrollo
         if (error.status === 0 || error.status === 404) {
           this.pedidosRecientes = [
@@ -139,7 +139,7 @@ export class DashboardComponent implements OnInit {
     this.cargandoProductos = true;
     this.errorProductos = null;
 
-    this.dashboardService.obtenerProductosPopulares().subscribe({
+    this.dashboardService.getProductosPopulares().subscribe({
       next: (data) => {
         this.productosPopulares = data.slice(0, 5); // Solo los 5 más populares
         this.cargandoProductos = false;
@@ -149,7 +149,7 @@ export class DashboardComponent implements OnInit {
         console.error('❌ Error cargando productos populares:', error);
         this.errorProductos = 'No se pudieron cargar los productos populares';
         this.cargandoProductos = false;
-        
+
         // Datos de ejemplo para desarrollo
         if (error.status === 0 || error.status === 404) {
           this.productosPopulares = [
@@ -167,7 +167,7 @@ export class DashboardComponent implements OnInit {
     this.cargandoVentas = true;
     this.errorVentas = null;
 
-    this.dashboardService.obtenerVentasMensuales().subscribe({
+    this.dashboardService.getVentasMensuales().subscribe({
       next: (data) => {
         this.ventasMensuales = data.slice(0, 6); // Últimos 6 meses
         this.cargandoVentas = false;
@@ -177,7 +177,7 @@ export class DashboardComponent implements OnInit {
         console.error('❌ Error cargando ventas mensuales:', error);
         this.errorVentas = 'No se pudieron cargar las ventas mensuales';
         this.cargandoVentas = false;
-        
+
         // Datos de ejemplo para desarrollo
         if (error.status === 0 || error.status === 404) {
           const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'];

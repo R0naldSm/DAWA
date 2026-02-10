@@ -50,17 +50,17 @@
     <div class="col-md-4">
       <div class="input-group">
         <span class="input-group-text"><i class="bi bi-search"></i></span>
-        <input 
-          type="text" 
-          class="form-control" 
+        <input
+          type="text"
+          class="form-control"
           placeholder="Buscar proveedor o concepto..."
           [(ngModel)]="busqueda"
           (ngModelChange)="aplicarFiltros()">
       </div>
     </div>
     <div class="col-md-3">
-      <select 
-        class="form-select" 
+      <select
+        class="form-select"
         [(ngModel)]="filtroEstado"
         (ngModelChange)="aplicarFiltros()">
         <option value="Todos">Todos los estados</option>
@@ -95,8 +95,8 @@
           </thead>
           <tbody>
             <tr *ngFor="let pago of pagosFiltrados">
-              <td>{{ pago.id }}</td>
-              <td><strong>{{ pago.proveedor }}</strong></td>
+              <td>{{ pago.idPago }}</td>
+              <td><strong>{{ pago.idProveedor }}</strong></td>
               <td>{{ pago.concepto }}</td>
               <td>{{ pago.fecha }}</td>
               <td><strong>${{ pago.monto.toFixed(2) }}</strong></td>
@@ -107,16 +107,16 @@
               </td>
               <td>{{ pago.metodoPago || '-' }}</td>
               <td>
-                <button 
+                <button
                   *ngIf="pago.estado === 'Pendiente'"
-                  class="btn btn-sm btn-success me-1" 
+                  class="btn btn-sm btn-success me-1"
                   (click)="marcarComoPagado(pago)"
                   title="Marcar como pagado">
                   <i class="bi bi-check-circle"></i>
                 </button>
-                <button 
-                  class="btn btn-sm btn-danger" 
-                  (click)="eliminarPago(pago.id)"
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="eliminarPago(pago.idPago)"
                   title="Eliminar">
                   <i class="bi bi-trash"></i>
                 </button>
@@ -124,7 +124,7 @@
             </tr>
           </tbody>
         </table>
-        
+
         <div *ngIf="pagosFiltrados.length === 0" class="text-center py-5 text-muted">
           <i class="bi bi-inbox" style="font-size: 3rem;"></i>
           <p class="mt-2">No se encontraron pagos</p>
@@ -146,18 +146,18 @@
         <form>
           <div class="mb-3">
             <label class="form-label">Proveedor *</label>
-            <input 
-              type="text" 
-              class="form-control" 
+            <input
+              type="text"
+              class="form-control"
               [(ngModel)]="nuevoPago.proveedor"
               name="proveedor"
               required>
           </div>
           <div class="mb-3">
             <label class="form-label">Concepto *</label>
-            <input 
-              type="text" 
-              class="form-control" 
+            <input
+              type="text"
+              class="form-control"
               [(ngModel)]="nuevoPago.concepto"
               name="concepto"
               required>
@@ -165,9 +165,9 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Monto ($) *</label>
-              <input 
-                type="number" 
-                class="form-control" 
+              <input
+                type="number"
+                class="form-control"
                 [(ngModel)]="nuevoPago.monto"
                 name="monto"
                 min="0"
@@ -176,9 +176,9 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Fecha *</label>
-              <input 
-                type="date" 
-                class="form-control" 
+              <input
+                type="date"
+                class="form-control"
                 [(ngModel)]="nuevoPago.fecha"
                 name="fecha"
                 required>
@@ -187,8 +187,8 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Estado *</label>
-              <select 
-                class="form-select" 
+              <select
+                class="form-select"
                 [(ngModel)]="nuevoPago.estado"
                 name="estado">
                 <option value="Pendiente">Pendiente</option>
@@ -198,8 +198,8 @@
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Método de Pago</label>
-              <select 
-                class="form-select" 
+              <select
+                class="form-select"
                 [(ngModel)]="nuevoPago.metodoPago"
                 name="metodoPago">
                 <option value="">Seleccionar...</option>
